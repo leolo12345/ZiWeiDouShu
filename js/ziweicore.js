@@ -1,5 +1,26 @@
 /*紫微斗數 Chinese Astrology Zi Wei Dou Shu*/
-var ziwei = {
+/**
+ * @typedef {Object} PlaceData
+ * @property {string} MangA
+ * @property {string} MangB
+ * @property {string} MangC
+ * @property {string[]} StarA
+ * @property {string[]} StarB
+ * @property {string[]} StarC
+ * @property {string[]} Star6
+ */
+
+/**
+ * @typedef {Object} AnalysisResult
+ * @property {string} a
+ * @property {string} b
+ * @property {string} c
+ * @property {string} d
+ * @property {string} e
+ * @property {string} f
+ */
+
+const ziwei = {
 	y:null, m:null, d:null, h:null, g:null, l:null, b:null, f:null, s4:null, z:null,
 	yS:null, mS:null, dS:null, LunarDay:null, ShengXiao:null,
 	y1Pos:null,	y2Pos:null,	hPos:null,	lPos:null,	bPos:null,	zPos:null, Palce:null,
@@ -36,12 +57,14 @@ var ziwei = {
 	getYinYangGender:function(){return YinYang[y1Pos%2]+(g=="M"?"男":"女");},
 	//CenterPart↑
 	getStarArr:function (STAR,size,pos){
-		var starArray = new Array();
-		for (i=0;i<size;i++){ starArray[i]=STAR[i][pos]; } return starArray;
+		const starArray = [];
+		for (let i=0;i<size;i++){ starArray[i]=STAR[i][pos]; }
+		return starArray;
 	},
 	getStarArrByPosArr:function (STAR,size,PosArr){
-		var starArray = new Array();
-		for (i=0;i<size;i++){ starArray[i]=STAR[i][PosArr[i]]; } return starArray;
+		const starArray = [];
+		for (let i=0;i<size;i++){ starArray[i]=STAR[i][PosArr[i]]; }
+		return starArray;
 	},
 	putS04Str:function (starName,STAR){
 		return (STAR.indexOf(starName)>=0)?"<b>"+StarM_S04[STAR.indexOf(starName)].substring(1,2)+"</b>":"　";
@@ -79,24 +102,24 @@ var ziwei = {
 		var OS05=this.getStarArr(Star_OS5,5,y2Pos);
 		Place12=new Array(12);
 		//準備開始組星星
-		for (i=0;i<12;i++){
+		for (let i=0;i<12;i++){
 			var StarA,StarB,StarC,Star6,lenStar=[0,0,0,0];
 			StarA=[];StarB=[];StarC=[];Star6=[];
 			//紫微星系 & 六凶星 
-			for (k=0;k<6;k++){
+			for (let k=0;k<6;k++){
 				if (sZ06[k]==i){ StarA[lenStar[0]]=StarM_A14[k]+this.getS04Str(StarM_A14[k],sS04); lenStar[0]+=1; }
 				if (sB06[k]==i){ StarB[lenStar[1]]=StarM_B06[k]; lenStar[1]+=1;}
 			}
 			//天府星系
-			for (k=0;k<8;k++){
+			for (let k=0;k<8;k++){
 				if (sT08[k]==i){ StarA[lenStar[0]]=StarM_A14[k+6]+this.getS04Str(StarM_A14[k+6],sS04); lenStar[0]+=1; }
 			}
 			//六吉星
-			for (k=0;k<7;k++){
+			for (let k=0;k<7;k++){
 				if (sG07[k]==i){ Star6[lenStar[3]]=StarM_A07[k]+this.getS04Str(StarM_A07[k],sS04); lenStar[3]+=1; }
 			}
 			//其他星矅StarO_S0.length
-			for (k=0;k<5;k++){
+			for (let k=0;k<5;k++){
 				if (OS05[k]==i){ StarC[lenStar[2]]=StarO_S05[k]; lenStar[2]+=1;}
 			}
 			//塞入位置
@@ -122,12 +145,12 @@ var ziwei = {
 		}
 		var DShian=new Array(10);
 		var SShian=new Array(10);
-		for (i=0;i<12;i++){
+		for (let i=0;i<12;i++){
 			//起大限表
 			var DSY=MangDirection==1?DaShianYear+i*10:(DaShianYear-i*10+120)%120;
 	  		//起小限表
 	  		SiaoShianStr="";
-			for (j=0;j<6;j++){
+			for (let j=0;j<6;j++){
 				SiaoShianStr+=","+(j*12+i+1);
 			}
 			SiaoShianStr=SiaoShianStr.substring(1) + " ... ";
@@ -136,5 +159,97 @@ var ziwei = {
 			SShian[SiaoPlace]=SiaoShianStr;
 		}
 		return {"DShian":DShian,"SShian":SShian};
+	},
+	//命盤分析函數
+	analyzePalace: function(place12) {
+		var analysis = {
+			a: this.analyzeMainPalace(place12),
+			b: this.analyzeFourTransformations(),
+			c: this.analyzeThreeDirections(place12),
+			d: this.analyzeLuckyEvilStars(place12),
+			e: this.analyzeSpecialPatterns(place12),
+			f: this.analyzeCareerAbility(place12)
+		};
+		return analysis;
+	},
+	//A. 命宮與福德宮主星的基本分析
+	analyzeMainPalace:function(place12) {
+		var lifePalace = place12[ziwei.lPos];
+		var virtuePalace = place12[(ziwei.lPos + 10) % 12]; //福德宮在命宮逆數第2宮
+		var analysis = "命宮主星: " + lifePalace.StarA.join(" ") + "\n";
+		analysis += "福德宮主星: " + virtuePalace.StarA.join(" ") + "\n";
+		return analysis;
+	},
+	
+	//B. 四化星分析
+	analyzeFourTransformations:function() {
+		var sS04 = this.getStarArr(Star_S04, 4, ziwei.y1Pos);
+		var analysis = "四化星:\n";
+		analysis += "祿: " + StarM_S04[0] + "\n";
+		analysis += "權: " + StarM_S04[1] + "\n";
+		analysis += "科: " + StarM_S04[2] + "\n";
+		analysis += "忌: " + StarM_S04[3] + "\n";
+		return analysis;
+	},
+	
+	//C. 命宮三方四正總格局分析
+	analyzeThreeDirections:function(place12) {
+		var lifePos = ziwei.lPos;
+		var threeDirections = [
+			place12[lifePos], //命宮
+			place12[(lifePos + 2) % 12], //事業宮
+			place12[(lifePos + 10) % 12], //財帛宮
+			place12[(lifePos + 6) % 12]  //遷移宮
+		];
+		var analysis = "三方四正主星組合:\n";
+		threeDirections.forEach(function(palace, i) {
+			analysis += Palace[(12 - lifePos + i * 2) % 12] + ": " + palace.StarA.join(" ") + "\n";
+		});
+		return analysis;
+	},
+	
+	//D. 六吉星和六煞星分析
+	analyzeLuckyEvilStars:function(place12) {
+		var lifePos = ziwei.lPos;
+		var analysis = "六吉星:\n";
+		analysis += "命宮: " + place12[lifePos].Star6.join(" ") + "\n";
+		analysis += "六煞星:\n";
+		analysis += "命宮: " + place12[lifePos].StarB.join(" ") + "\n";
+		return analysis;
+	},
+	
+	//E. 特殊格局分析
+	analyzeSpecialPatterns:function(place12) {
+		var lifePos = ziwei.lPos;
+		var stars = place12[lifePos].StarA.concat(place12[lifePos].Star6);
+		var analysis = "";
+		
+		//檢查特殊格局
+		if(stars.includes("紫微") && stars.includes("天府")) {
+			analysis += "紫府同宮格: 富貴雙全\n";
+		}
+		if(stars.includes("太陽") && stars.includes("太陰")) {
+			analysis += "日月同輝格: 事業有成\n";
+		}
+		//可添加更多格局判斷
+		
+		return analysis || "無明顯特殊格局";
+	},
+	
+	//F. 工作能力分析
+	analyzeCareerAbility:function(place12) {
+		var careerPalace = place12[(ziwei.lPos + 2) % 12]; //事業宮
+		var analysis = "事業宮主星: " + careerPalace.StarA.join(" ") + "\n";
+		
+		//根據主星分析工作能力
+		if(careerPalace.StarA.includes("紫微")) {
+			analysis += "領導能力強，適合管理職位\n";
+		}
+		if(careerPalace.StarA.includes("天機")) {
+			analysis += "思慮周密，適合策劃、分析工作\n";
+		}
+		//可添加更多主星分析
+		
+		return analysis;
 	}
 };
