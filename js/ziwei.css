@@ -33,3 +33,56 @@ body { padding: 10px 25px;margin: 0;background-image:url('../img/star.png');back
 .MangY1{bottom:1.8em;color:navy;}
 .zwStarRight,.MangC{right:0;}
 .zwStarLeft,.MangA{left:0;}
+
+/* 表格基礎樣式 */
+table {
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-family: Arial, sans-serif;
+}
+
+/* 主星分析表格樣式 */
+#analysis {
+    width: 100%;
+    background-color: #f8f8f8;
+    border: 1px solid #d4d4d4;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#analysis td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e0e0e0;
+    line-height: 1.6;
+}
+
+#analysis tr:last-child td {
+    border-bottom: none;
+}
+
+/* 主星分布表格樣式 */
+.ziwei-table {
+    width: 100%;
+    background-color: white;
+    border: 1px solid #d4d4d4;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.ziwei-table th {
+    background-color: #6a5acd;
+    color: white;
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.ziwei-table td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.ziwei-table tr:nth-child(even) {
+    background-color: #f3f0ff;
+}
+
+.ziwei-table tr:hover {
+    background-color: #e6e0ff;
+}

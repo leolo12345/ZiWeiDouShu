@@ -27,7 +27,7 @@ var StarOS5Positions = [];
 // 從數據庫加載天干數據
 function loadHeavenlyStems() {
     return new Promise((resolve, reject) => {
-        fetch('/api/heavenly-stems')
+        fetch('/ziwei/api/heavenly-stems')
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -52,7 +52,7 @@ function loadHeavenlyStems() {
 // 從數據庫加載地支數據
 function loadEarthlyBranches() {
     return new Promise((resolve, reject) => {
-        fetch('/api/earthly-branches')
+        fetch('/ziwei/api/earthly-branches')
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -77,7 +77,7 @@ function loadEarthlyBranches() {
 // 從數據庫加載陰陽數據
 function loadYinYang() {
     return new Promise((resolve, reject) => {
-        fetch('/api/yin-yang')
+        fetch('/ziwei/api/yin-yang')
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -102,7 +102,7 @@ function loadYinYang() {
 // 從數據庫加載生肖數據
 function loadZodiacSigns() {
     return new Promise((resolve, reject) => {
-        fetch('/api/zodiac-signs')
+        fetch('/ziwei/api/zodiac-signs')
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -127,7 +127,7 @@ function loadZodiacSigns() {
 // 從數據庫加載宮位數據
 function loadPalaces() {
     return new Promise((resolve, reject) => {
-        fetch('/api/palaces')
+        fetch('/ziwei/api/palaces')
             .then(response => response.json())
             .then(data => {
                 Palaces = data;
@@ -144,7 +144,7 @@ function loadPalaces() {
 // 從數據庫加載五行局數據
 function loadFiveElements() {
     return new Promise((resolve, reject) => {
-        fetch('/api/five-elements')
+        fetch('/ziwei/api/five-elements')
             .then(response => response.json())
             .then(data => {
                 FiveElements = data;
@@ -161,7 +161,7 @@ function loadFiveElements() {
 // 從數據庫加載主星數據
 function loadMainStars() {
     return new Promise((resolve, reject) => {
-        fetch('/api/main-stars')
+        fetch('/ziwei/api/main-stars')
             .then(response => response.json())
             .then(data => {
                 MainStars = data.map(item => item.name);
@@ -178,7 +178,7 @@ function loadMainStars() {
 // 從數據庫加載輔星數據
 function loadAuxiliaryStars() {
     return new Promise((resolve, reject) => {
-        fetch('/api/auxiliary-stars')
+        fetch('/ziwei/api/auxiliary-stars')
             .then(response => response.json())
             .then(data => {
                 AuxiliaryStars = data.map(item => item.name);
@@ -195,7 +195,7 @@ function loadAuxiliaryStars() {
 // 從數據庫加載四化星數據
 function loadTransformationStars() {
     return new Promise((resolve, reject) => {
-        fetch('/api/transformation-stars')
+        fetch('/ziwei/api/transformation-stars')
             .then(response => response.json())
             .then(data => {
                 TransformationStars = data.map(item => item.name);
@@ -212,7 +212,7 @@ function loadTransformationStars() {
 // 從數據庫加載六凶星數據
 function loadEvilStars() {
     return new Promise((resolve, reject) => {
-        fetch('/api/evil-stars')
+        fetch('/ziwei/api/evil-stars')
             .then(response => response.json())
             .then(data => {
                 EvilStars = data.map(item => item.name);
@@ -229,7 +229,7 @@ function loadEvilStars() {
 // 從數據庫加載雜曜數據
 function loadOtherStars() {
     return new Promise((resolve, reject) => {
-        fetch('/api/other-stars')
+        fetch('/ziwei/api/other-stars')
             .then(response => response.json())
             .then(data => {
                 OtherStars = data.map(item => item.name);
@@ -246,7 +246,7 @@ function loadOtherStars() {
 // 從數據庫加載主星位置數據 (Star_A14)
 function loadStarA14Positions() {
     return new Promise((resolve, reject) => {
-        fetch('/api/star-a14-positions')
+        fetch('/ziwei/api/star-a14-positions')
             .then(response => response.json())
             .then(data => {
                 StarA14Positions = data;
@@ -263,7 +263,7 @@ function loadStarA14Positions() {
 // 從數據庫加載紫微諸星位置數據 (Star_Z06)
 function loadStarZ06Positions() {
     return new Promise((resolve, reject) => {
-        fetch('/api/star-z06-positions')
+        fetch('/ziwei/api/star-z06-positions')
             .then(response => response.json())
             .then(data => {
                 StarZ06Positions = data;
@@ -280,7 +280,7 @@ function loadStarZ06Positions() {
 // 從數據庫加載天府諸星位置數據 (Star_T08)
 function loadStarT08Positions() {
     return new Promise((resolve, reject) => {
-        fetch('/api/star-t08-positions')
+        fetch('/ziwei/api/star-t08-positions')
             .then(response => response.json())
             .then(data => {
                 StarT08Positions = data;
@@ -297,7 +297,7 @@ function loadStarT08Positions() {
 // 從數據庫加載六吉星位置數據 (Star_G07)
 function loadStarG07Positions() {
     return new Promise((resolve, reject) => {
-        fetch('/api/star-g07-positions')
+        fetch('/ziwei/api/star-g07-positions')
             .then(response => response.json())
             .then(data => {
                 StarG07Positions = data;
@@ -314,7 +314,7 @@ function loadStarG07Positions() {
 // 從數據庫加載六凶星位置數據 (Star_B06)
 function loadStarB06Positions() {
     return new Promise((resolve, reject) => {
-        fetch('/api/star-b06-positions')
+        fetch('/ziwei/api/star-b06-positions')
             .then(response => response.json())
             .then(data => {
                 StarB06Positions = data;
@@ -331,7 +331,7 @@ function loadStarB06Positions() {
 // 從數據庫加載雜曜位置數據 (Star_OS5)
 function loadStarOS5Positions() {
     return new Promise((resolve, reject) => {
-        fetch('/api/star-os5-positions')
+        fetch('/ziwei/api/star-os5-positions')
             .then(response => response.json())
             .then(data => {
                 StarOS5Positions = data;
@@ -340,6 +340,29 @@ function loadStarOS5Positions() {
             })
             .catch(error => {
                 console.error("雜曜位置數據加載失敗:", error);
+                reject(error);
+            });
+    });
+}
+
+// 從數據庫獲取主星分析
+function getStarAnalysis(starName, palaceName) {
+    return new Promise((resolve, reject) => {
+        fetch(`/ziwei/api/star-analysis?star=${encodeURIComponent(starName)}&palace=${encodeURIComponent(palaceName)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (!data || !data.analysis) {
+                    throw new Error('Invalid analysis data received');
+                }
+                resolve(data.analysis);
+            })
+            .catch(error => {
+                console.error(`獲取${starName}在${palaceName}的分析失敗:`, error);
                 reject(error);
             });
     });
