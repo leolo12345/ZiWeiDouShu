@@ -439,17 +439,10 @@ window.addEventListener('load' ,function(){
 	ziweiUI.initial();
 	document.querySelector("input[type=button]").addEventListener('click',async function () {
 	console.group(`[UI][${new Date().toISOString()}] 用戶點擊現在時間按鈕`);
+	console.log('開始執行genZiwei()');
 	try {
-		console.log('開始執行genZiwei()');
-		// 設置標記表示命盤生成中
-		window.ziweiGenerating = true;
-		try {
-			await ziweiUI.genZiwei();
-			console.log('genZiwei()執行完成');
-		} finally {
-			// 清除標記表示命盤生成完成
-			window.ziweiGenerating = false;
-		}
+		await ziweiUI.genZiwei();
+		console.log('genZiwei()執行完成');
 	} catch (e) {
 		console.error("[ERROR] 生成命盤失敗:", {
 			message: e.message,

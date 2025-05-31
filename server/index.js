@@ -8,17 +8,17 @@ app.use(cors());
 const PORT = 3001;
 
 // 設置靜態文件服務
-app.use('/TraditionalChinese', express.static(path.join(__dirname, '../TraditionalChinese')));
+app.use('/tc', express.static(path.join(__dirname, '../tc')));
 
 // 數據庫路徑 (相對于server目錄)
-const dbPath = path.join(__dirname, '../TraditionalChinese/DB/ziwei.db');
+const dbPath = path.join(__dirname, '../tc/DB/ziwei.db');
 
 // API端點：獲取星曜分析
 // 添加根目錄重定向
 app.get('/', (req, res) => {
   console.group(`[API][${new Date().toISOString()}] 根目錄重定向`);
   console.log('請求來源:', req.headers['user-agent']);
-  res.redirect('/TraditionalChinese/index.html');
+  res.redirect('/tc/index.html');
   console.groupEnd();
 });
 
