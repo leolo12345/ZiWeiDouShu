@@ -60,9 +60,6 @@ fetchStarAnalysis: async function(palace, star, elementId) {
     try {
         // 標準化宮位名稱格式（移除【】等特殊符號）
         const normalizedPalace = palace.replace(/[【】]/g, '');
-        console.groupCollapsed(`[DEBUG][${new Date().toISOString()}] 星曜分析請求開始 - ${normalizedPalace}宮 ${star}星`);
-        console.log('原始請求參數:', { palace, star, elementId });
-        console.log('標準化後宮位:', normalizedPalace);
         
         // 驗證輸入參數
         if (!normalizedPalace || !star) {
@@ -72,7 +69,6 @@ fetchStarAnalysis: async function(palace, star, elementId) {
         // 確保分析區域存在
         let analysisContainer = document.getElementById('mingfu-analysis');
         if (!analysisContainer) {
-            console.log('創建新的分析容器');
             analysisContainer = document.createElement('div');
             analysisContainer.id = 'mingfu-analysis';
             analysisContainer.className = 'star-analysis-container';
@@ -81,7 +77,6 @@ fetchStarAnalysis: async function(palace, star, elementId) {
 
         // 發送API請求並等待響應
         const apiUrl = `http://localhost:3001/api/star-analysis?palace=${encodeURIComponent(normalizedPalace)}&star=${encodeURIComponent(star)}`;
-        console.log(`發送API請求: ${apiUrl}`);
         
         const startTime = performance.now();
         const response = await fetch(apiUrl, {
@@ -91,17 +86,14 @@ fetchStarAnalysis: async function(palace, star, elementId) {
             }
         });
         const duration = performance.now() - startTime;
-        console.log(`API響應時間: ${duration.toFixed(2)}ms`);
         
         if (!response.ok) {
             const errorBody = await response.text();
-            console.error('API錯誤響應內容:', errorBody);
             throw new Error(`API請求失敗: ${response.status} - ${response.statusText}`);
         }
 
         // 解析響應數據（兼容JSON和純文本）
         let responseText = await response.text();
-        console.log('API原始響應數據:', responseText);
         
         let analysisText;
         try {
@@ -115,20 +107,14 @@ fetchStarAnalysis: async function(palace, star, elementId) {
         
         // 確保分析文本有效
         analysisText = (analysisText || '無分析內容').trim();
-        console.log(`解析後的分析文本: ${analysisText}`);
         
         // 返回格式化結果
         const resultText = `${palace}  ${star}星分析: ${analysisText}`;
-        //const resultText = `${analysisText}`;		
-        console.log('最終返回結果:', resultText);
+        //const resultText = `${analysisText}`;
         return resultText;
     } catch (error) {
-        console.error('[ERROR] 獲取星曜分析失敗:', error);
-        console.error('錯誤堆棧:', error.stack);
-        
         const analysisElement = document.getElementById('mingfu-analysis');
         if (!analysisElement) {
-        	console.error('找不到命宮分析元素');
         	return;
         }
         
@@ -150,9 +136,6 @@ fetchStarAnalysis: async function(palace, star, elementId) {
     }
 },
 	genZiwei: async function() {
-		console.groupCollapsed(`[API][${new Date().toISOString()}] 開始生成紫微命盤`);
-		console.log('開始收集用戶輸入參數');
-		
 		let gender=	document.querySelectorAll("input[type=radio]");
 		let genderValue="M";
 		for (i=0;i<gender.length;i++){
@@ -168,12 +151,8 @@ fetchStarAnalysis: async function(palace, star, elementId) {
 			hour: document.getElementById("sel_Hour").value,
 			gender: genderValue
 		};
-		console.log('用戶輸入參數:', JSON.stringify(birthParams, null, 2));
-		
-		console.log('開始計算紫微命盤基礎數據');
 		const startTime = performance.now();
 		var zw = ziwei.computeZiWei(birthParams.year, birthParams.month, birthParams.day, birthParams.hour, birthParams.gender);
-		console.log(`紫微命盤計算完成，耗時: ${(performance.now() - startTime).toFixed(2)}ms`);
 		
 		// 填充星曜表格
 		let tableBody = document.getElementById("star-table-body");
@@ -225,52 +204,21 @@ fetchStarAnalysis: async function(palace, star, elementId) {
 		let mingStars = [];
 		let fudeStars = [];
 		let analysisResults = [];
-		console.groupCollapsed(`[API][${new Date().toISOString()}] 開始分析命宮/福德宮主星`);
-		console.log('初始化分析結果數組');
 		
 		try {
-			// 調試：輸出完整命盤數據
-			console.groupCollapsed('[DEBUG] 完整命盤數據');
-			console.table(zw.map(p => ({
-				MangB: p.MangB,
-				StarA: p.StarA.join(','),
-				StarB: p.StarB.join(','),
-				StarC: p.StarC.join(',')
-			})));
-			console.groupEnd();
 
 			// 獲取命宮位置（兼容【】格式）
 			const mingPalace = zw.findIndex(palace =>
 				palace.MangB.includes("命宮"));
-			console.log('[DEBUG] 命宮位置:', mingPalace, '完整路徑檢查:', zw.map(p => p.MangB));
 			if (mingPalace !== -1) {
 				// 獲取命宮主星（過濾掉化星）
-				console.log('[DEBUG] 命宮原始StarA:', zw[mingPalace].StarA, '原始數組:', zw[mingPalace].StarA);
 				mingStars = zw[mingPalace].StarA
 					.filter(star => !star.startsWith("化"))
 					.map(star => {
 						const cleanedStar = star.replace(/<[^>]*>/g, "").substring(0, 2);
-						console.log('[DEBUG] 命宮主星處理:', {original: star, cleaned: cleanedStar});
 						return cleanedStar;
 					});
-				console.log('[DEBUG] 命宮過濾後主星:', mingStars);
-				
-				// 調用API獲取命宮分析並等待結果
-				console.groupCollapsed('[DEBUG] 命宮主星API調用驗證');
-				console.log('將要傳遞的星曜列表:', mingStars);
-				console.log('驗證星曜格式:', mingStars.map(s => ({
-					original: s,
-					length: s.length,
-					valid: s.length === 2 && !s.startsWith("化")
-				})));
-				console.groupEnd();
-				
 				const mingAnalysisResults = await Promise.all(mingStars.map(star => {
-					console.log('[DEBUG] 調用fetchStarAnalysis:', {
-						palace: "命宮",
-						star,
-						valid: star.length === 2 && !star.startsWith("化")
-					});
 					return this.fetchStarAnalysis("命宮", star, 'mingfu-analysis');
 				}));
 				analysisResults.push(...mingAnalysisResults.filter(Boolean));
@@ -279,35 +227,18 @@ fetchStarAnalysis: async function(palace, star, elementId) {
 			// 獲取福德宮位置（完全兼容DOM格式）
 			const fudePalace = zw.findIndex(palace =>
 				palace.MangB.includes("福德宮"));
-			console.log('[DEBUG] 福德宮位置:', fudePalace, '完整路徑檢查:', zw.map(p => p.MangB));
 			if (fudePalace !== -1) {
 				// 獲取福德宮主星（過濾掉化星）
-				console.log('[DEBUG] 福德宮原始StarA:', zw[fudePalace].StarA, '原始數組:', zw[fudePalace].StarA);
 				fudeStars = zw[fudePalace].StarA
 					.filter(star => !star.startsWith("化"))
 					.map(star => {
 						const cleanedStar = star.replace(/<[^>]*>/g, "").substring(0, 2);
-						console.log('[DEBUG] 福德宮主星處理:', {original: star, cleaned: cleanedStar});
 						return cleanedStar;
 					});
-				console.log('[DEBUG] 福德宮過濾後主星:', fudeStars);
 				
 				// 調用API獲取福德宮分析並等待結果
-				console.groupCollapsed('[DEBUG] 福德宮主星API調用驗證');
-				console.log('將要傳遞的星曜列表:', fudeStars);
-				console.log('驗證星曜格式:', fudeStars.map(s => ({
-					original: s,
-					length: s.length,
-					valid: s.length === 2 && !s.startsWith("化")
-				})));
-				console.groupEnd();
 				
 				const fudeAnalysisResults = await Promise.all(fudeStars.map(star => {
-					console.log('[DEBUG] 調用fetchStarAnalysis:', {
-						palace: "福德宮",
-						star,
-						valid: star.length === 2 && !star.startsWith("化")
-					});
 					return this.fetchStarAnalysis("福德宮", star, 'mingfu-analysis');
 				}));
 				analysisResults.push(...fudeAnalysisResults.filter(Boolean));
@@ -317,7 +248,6 @@ fetchStarAnalysis: async function(palace, star, elementId) {
 			// 確保使用正確的分析容器
 			const analysisContainer = document.getElementById('mingfu-analysis');
 			if (!analysisContainer) {
-				console.error('找不到命宮分析容器元素');
 				return;
 			}
 				
@@ -342,8 +272,6 @@ fetchStarAnalysis: async function(palace, star, elementId) {
 							const star = palaceMatch[2];
 							// const analysis = text.replace(`${palace} ${star}分析: `, '');
 							const analysis = ''.concat(star+':',  text.substring( text.indexOf(':') + 1 ).trim() );
-							console.log('text->', text);
-							console.log('analysis->', analysis);
 							return `
 								<div class="star-analysis-section">
 									<h3>${palace}基本分析</h3>
@@ -368,12 +296,71 @@ fetchStarAnalysis: async function(palace, star, elementId) {
 			if (analysisContainer) {
 				analysisContainer.innerHTML = htmlContent;
 			} else {
-				console.error('找不到命宮分析容器元素');
 			}
 		} catch (e) {
 			console.groupEnd();
-			console.error("[ERROR] 獲取星曜分析時出錯:", e);
-			console.error("錯誤堆棧:", e.stack);
+		}
+		
+		// 添加四化星分析
+		try {
+			// 獲取命宮和福德宮的四化星
+			const mingPalace = zw.findIndex(p => p.MangB.includes("命宮"));
+			const fudePalace = zw.findIndex(p => p.MangB.includes("福德宮"));
+			
+			let sihuaResults = [];
+			
+			// 處理命宮四化星
+			if (mingPalace !== -1) {
+				const mingSihua = zw[mingPalace].StarA
+					.filter(star => star.startsWith("化"))
+					.map(star => star.substring(0, 2))
+				
+				const mingSihuaAnalysis = await Promise.all(mingSihua.map(star =>
+					this.fetchStarAnalysis("命宮", star, 'mingfu-analysis')
+				));
+				sihuaResults.push(...mingSihuaAnalysis.filter(Boolean));
+			}
+			
+			// 處理福德宮四化星
+			if (fudePalace !== -1) {
+				const fudeSihua = zw[fudePalace].StarA
+					.filter(star => star.startsWith("化"))
+					.map(star => star.substring(0, 2))
+				
+				const fudeSihuaAnalysis = await Promise.all(fudeSihua.map(star =>
+					this.fetchStarAnalysis("福德宮", star, 'mingfu-analysis')
+				));
+				sihuaResults.push(...fudeSihuaAnalysis.filter(Boolean));
+			}
+			
+			// 更新UI顯示四化星分析
+			if (sihuaResults.length > 0) {
+				const analysisContainer = document.getElementById('mingfu-analysis');
+				if (analysisContainer) {
+					const sihuaHtml = sihuaResults.map(text => {
+						if (typeof text === 'string') {
+							const palaceMatch = text.match(/(.*宮) (.*星)/);
+							if (palaceMatch) {
+								const palace = palaceMatch[1];
+								const star = palaceMatch[2];
+								const analysis = ''.concat(star+':', text.substring(text.indexOf(':') + 1).trim());
+								return `
+									<div class="star-analysis-section">
+										<h3>${palace}四化分析</h3>
+										<div class="star-analysis-content">${analysis}</div>
+									</div>
+								`;
+							}
+							return `<div class="star-analysis-item">${text}</div>`;
+						}
+						return '';
+					}).join('');
+					
+					analysisContainer.innerHTML += sihuaHtml;
+				}
+			}
+			
+		} catch (e) {
 		}
 	  //render Direction
 		var styleLR=[" zwStarLeft"," zwStarRight"];
@@ -438,54 +425,29 @@ window.addEventListener('load' ,function(){
 //開始使用
 	ziweiUI.initial();
 	document.querySelector("input[type=button]").addEventListener('click',async function () {
-	console.group(`[UI][${new Date().toISOString()}] 用戶點擊現在時間按鈕`);
-	console.log('開始執行genZiwei()');
 	try {
 		await ziweiUI.genZiwei();
-		console.log('genZiwei()執行完成');
 	} catch (e) {
-		console.error("[ERROR] 生成命盤失敗:", {
-			message: e.message,
-			stack: e.stack,
-			timestamp: new Date().toISOString()
-		});
 	} finally {
-		console.groupEnd();
 	}
 });
 	let s = document.querySelectorAll("select");
 	for (i=0;i<s.length;i++){
 		s[i].addEventListener('change',async function () {
-			console.group(`[UI][${new Date().toISOString()}] 用戶修改${this.id}值`);
-			console.log('新選擇的值:', this.value);
 			try {
 				await ziweiUI.genZiwei();
 			} catch (e) {
-				console.error("[ERROR] 生成命盤失敗:", {
-					message: e.message,
-					stack: e.stack,
-					timestamp: new Date().toISOString()
-				});
 			} finally {
-				console.groupEnd();
 			}
 		});
 	}
 	let r=document.querySelectorAll("input[type=radio]");
 	for (i=0;i<r.length;i++){
 		r[i].addEventListener('change',async function () {
-			console.group(`[UI][${new Date().toISOString()}] 用戶修改性別`);
-			console.log('新選擇的性別:', this.value);
 			try {
 				await ziweiUI.genZiwei();
 			} catch (e) {
-				console.error("[ERROR] 生成命盤失敗:", {
-					message: e.message,
-					stack: e.stack,
-					timestamp: new Date().toISOString()
-				});
 			} finally {
-				console.groupEnd();
 			}
 		});
 	}
@@ -495,9 +457,4 @@ window.addEventListener('load' ,function(){
 
 // 添加以下内容强制识别为JavaScript
 if (typeof ziweiUI !== 'undefined') {
-	 console.log(`[INIT][${new Date().toISOString()}] ziweiUI初始化完成`);
-	 console.log('當前配置:', {
-		 right2left: ziweiUI.right2left,
-		 version: '1.0.0'
-	 });
 }
