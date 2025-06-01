@@ -16,15 +16,23 @@ const dbPath = path.join(__dirname, '../tc/DB/ziwei.db');
 // API端點：獲取星曜分析
 // 添加根目錄重定向
 app.get('/', (req, res) => {
+  console.group(`[API][${new Date().toISOString()}] 根目錄重定向`);
+  console.log('請求來源:', req.headers['user-agent']);
   res.redirect('/tc/index.html');
+  console.groupEnd();
 });
 
-// 簡化日誌中間件
+// 統一日誌中間件
 app.use((req, res, next) => {
+  console.groupCollapsed(`[API][${new Date().toISOString()}] ${req.method} ${req.path}`);
+  console.log('請求參數:', req.query);
+  console.log('請求頭:', req.headers);
   const startTime = Date.now();
   
   res.on('finish', () => {
-    // 移除API請求日誌
+    console.log(`請求處理時間: ${Date.now() - startTime}ms`);
+    console.log('響應狀態碼:', res.statusCode);
+    console.groupEnd();
   });
   
   next();
@@ -33,19 +41,23 @@ app.use((req, res, next) => {
 // 基本數據API
 app.get('/api/heavenly-stems', (req, res) => {
   try {
-    // 移除數據庫查詢日誌
+    console.log('[DB] 查詢天干數據');
     const db = new sqlite3.Database(dbPath);
     db.all('SELECT name FROM heavenly_stems', [], (err, rows) => {
       if (err) {
-        // 移除所有日誌
+        console.error('[DB][ERROR] 天干查詢錯誤:', err.message);
         return res.status(500).json({ error: err.message });
       }
-      // 移除數據查詢結果日誌
+      console.log('[DB] 查詢到天干數據:', rows.length, '條');
       res.json(rows);
       db.close();
     });
   } catch (e) {
-    // 移除所有日誌
+    console.error('[API][ERROR] 處理天干請求異常:', {
+      message: e.message,
+      stack: e.stack,
+      timestamp: new Date().toISOString()
+    });
     res.status(500).json({ error: '伺服器內部錯誤' });
   }
 });
@@ -200,22 +212,32 @@ app.get('/api/star-os5-positions', (req, res) => {
 app.get('/api/star-analysis', (req, res) => {
   try {
     const { palace, star } = req.query;
+    console.log('[API] 星曜分析請求參數:', { palace, star });
     
     if (!palace || !star) {
-      // 移除參數檢查警告
+      console.warn('[API][WARN] 缺少必要參數');
       return res.status(400).json({ error: '缺少palace或star參數', analysis: '' });
     }
 
     const db = new sqlite3.Database(dbPath);
     const sql = `SELECT analysis FROM star_analysis WHERE palace = ? AND star = ?`;
     
+    console.log('[DB] 執行查詢:', sql, [palace, star]);
     const queryStart = Date.now();
     
     db.get(sql, [palace, star], (err, row) => {
+      console.log('[DB] 查詢耗時:', Date.now() - queryStart, 'ms');
+      
       if (err) {
-        // 移除所有日誌
+        console.error('[DB][ERROR] 查詢錯誤:', {
+          message: err.message,
+          stack: err.stack,
+          timestamp: new Date().toISOString()
+        });
         return res.status(500).json({ error: err.message, analysis: '' });
       }
+      
+      console.log('[DB] 查詢結果:', row ? '找到記錄' : '無匹配記錄');
       res.json({
         analysis: row ? row.analysis : '找不到對應分析',
         error: null
@@ -223,11 +245,15 @@ app.get('/api/star-analysis', (req, res) => {
       db.close();
     });
   } catch (e) {
-    // 移除所有日誌
+    console.error('[API][ERROR] 星曜分析處理異常:', {
+      message: e.message,
+      stack: e.stack,
+      timestamp: new Date().toISOString()
+    });
     res.status(500).json({ error: '伺服器內部錯誤', analysis: '' });
   }
 });
 
 app.listen(PORT, () => {
-  // 移除服務器啟動日誌
+  console.log(`服務器運行中: http://localhost:${PORT}`);
 });

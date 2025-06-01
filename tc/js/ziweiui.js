@@ -110,9 +110,10 @@ fetchStarAnalysis: async function(palace, star, elementId) {
         
         // 返回格式化結果
         const resultText = `${palace}  ${star}星分析: ${analysisText}`;
-        //const resultText = `${analysisText}`;
+        //const resultText = `${analysisText}`;		
         return resultText;
     } catch (error) {
+        
         const analysisElement = document.getElementById('mingfu-analysis');
         if (!analysisElement) {
         	return;
@@ -136,6 +137,7 @@ fetchStarAnalysis: async function(palace, star, elementId) {
     }
 },
 	genZiwei: async function() {
+		
 		let gender=	document.querySelectorAll("input[type=radio]");
 		let genderValue="M";
 		for (i=0;i<gender.length;i++){
@@ -151,6 +153,7 @@ fetchStarAnalysis: async function(palace, star, elementId) {
 			hour: document.getElementById("sel_Hour").value,
 			gender: genderValue
 		};
+		
 		const startTime = performance.now();
 		var zw = ziwei.computeZiWei(birthParams.year, birthParams.month, birthParams.day, birthParams.hour, birthParams.gender);
 		
@@ -206,6 +209,7 @@ fetchStarAnalysis: async function(palace, star, elementId) {
 		let analysisResults = [];
 		
 		try {
+			// 調試：輸出完整命盤數據
 
 			// 獲取命宮位置（兼容【】格式）
 			const mingPalace = zw.findIndex(palace =>
@@ -218,6 +222,9 @@ fetchStarAnalysis: async function(palace, star, elementId) {
 						const cleanedStar = star.replace(/<[^>]*>/g, "").substring(0, 2);
 						return cleanedStar;
 					});
+				
+				// 調用API獲取命宮分析並等待結果
+				
 				const mingAnalysisResults = await Promise.all(mingStars.map(star => {
 					return this.fetchStarAnalysis("命宮", star, 'mingfu-analysis');
 				}));
@@ -298,69 +305,6 @@ fetchStarAnalysis: async function(palace, star, elementId) {
 			} else {
 			}
 		} catch (e) {
-			console.groupEnd();
-		}
-		
-		// 添加四化星分析
-		try {
-			// 獲取命宮和福德宮的四化星
-			const mingPalace = zw.findIndex(p => p.MangB.includes("命宮"));
-			const fudePalace = zw.findIndex(p => p.MangB.includes("福德宮"));
-			
-			let sihuaResults = [];
-			
-			// 處理命宮四化星
-			if (mingPalace !== -1) {
-				const mingSihua = zw[mingPalace].StarA
-					.filter(star => star.startsWith("化"))
-					.map(star => star.substring(0, 2))
-				
-				const mingSihuaAnalysis = await Promise.all(mingSihua.map(star =>
-					this.fetchStarAnalysis("命宮", star, 'mingfu-analysis')
-				));
-				sihuaResults.push(...mingSihuaAnalysis.filter(Boolean));
-			}
-			
-			// 處理福德宮四化星
-			if (fudePalace !== -1) {
-				const fudeSihua = zw[fudePalace].StarA
-					.filter(star => star.startsWith("化"))
-					.map(star => star.substring(0, 2))
-				
-				const fudeSihuaAnalysis = await Promise.all(fudeSihua.map(star =>
-					this.fetchStarAnalysis("福德宮", star, 'mingfu-analysis')
-				));
-				sihuaResults.push(...fudeSihuaAnalysis.filter(Boolean));
-			}
-			
-			// 更新UI顯示四化星分析
-			if (sihuaResults.length > 0) {
-				const analysisContainer = document.getElementById('mingfu-analysis');
-				if (analysisContainer) {
-					const sihuaHtml = sihuaResults.map(text => {
-						if (typeof text === 'string') {
-							const palaceMatch = text.match(/(.*宮) (.*星)/);
-							if (palaceMatch) {
-								const palace = palaceMatch[1];
-								const star = palaceMatch[2];
-								const analysis = ''.concat(star+':', text.substring(text.indexOf(':') + 1).trim());
-								return `
-									<div class="star-analysis-section">
-										<h3>${palace}四化分析</h3>
-										<div class="star-analysis-content">${analysis}</div>
-									</div>
-								`;
-							}
-							return `<div class="star-analysis-item">${text}</div>`;
-						}
-						return '';
-					}).join('');
-					
-					analysisContainer.innerHTML += sihuaHtml;
-				}
-			}
-			
-		} catch (e) {
 		}
 	  //render Direction
 		var styleLR=[" zwStarLeft"," zwStarRight"];
@@ -429,6 +373,7 @@ window.addEventListener('load' ,function(){
 		await ziweiUI.genZiwei();
 	} catch (e) {
 	} finally {
+		console.groupEnd();
 	}
 });
 	let s = document.querySelectorAll("select");
@@ -438,6 +383,7 @@ window.addEventListener('load' ,function(){
 				await ziweiUI.genZiwei();
 			} catch (e) {
 			} finally {
+				console.groupEnd();
 			}
 		});
 	}
@@ -448,6 +394,7 @@ window.addEventListener('load' ,function(){
 				await ziweiUI.genZiwei();
 			} catch (e) {
 			} finally {
+				console.groupEnd();
 			}
 		});
 	}
