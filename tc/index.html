@@ -88,33 +88,40 @@
 	// 等待所有JS載入完成
 	document.addEventListener('DOMContentLoaded', function() {
 		// 命宮與福德宮分析數據
-		const starAnalysis = {
-		// 命宮分析 (3-17行)
-		ming: [
-
-		],
-		// 福德宮分析 (164-177行)
-		fu: [
-
-		]
-	};
-
+		console.log('開始獲取命宮福德宮分析...');
 		// 監聽排盤按鈕點擊
-		document.getElementById('btn-gen').addEventListener('click', function() {
+		document.getElementById('btn-gen').addEventListener('click', async function() {
+			const btn = this;
+			const originalText = btn.value;
+			
 			console.log('排盤按鈕點擊');
-			if (typeof ziweiUI !== 'undefined' && ziweiUI.genZiwei) {
-				console.log('呼叫 ziweiUI.genZiwei()');
-				ziweiUI.genZiwei();
-				setTimeout(function() {
-					console.log('執行 updateMingFuAnalysis');
-					console.log('檢查福德宮數據是否存在...');
-					updateMingFuAnalysis().catch(e => console.error('updateMingFuAnalysis 錯誤:', e));
-				}, 2000); // 增加等待時間確保排盤完成
-			} else {
-				console.error('ziweiUI 未正確載入:', typeof ziweiUI, ziweiUI);
+			try {
+				btn.disabled = true;
+				btn.value = '排盤中...';
+				
+				if (typeof ziweiUI === 'undefined' || !ziweiUI.genZiwei) {
+					throw new Error('ziweiUI 未正確載入');
+				}
+
+				console.log('開始排盤...');
+				const isSuccess = await ziweiUI.genZiwei();
+				
+				if (!isSuccess) {
+					throw new Error('排盤失敗');
+				}
+
+				console.log('排盤完成，開始分析命宮福德宮...');
+				await updateMingFuAnalysis();
+				console.log('命宮福德宮分析完成');
+			} catch (error) {
+				console.error('排盤過程中出錯:', error);
+				alert('排盤失敗: ' + error.message);
+			} finally {
+				btn.disabled = false;
+				btn.value = originalText;
 			}
 		});
-
+		console.log('排盤按鈕事件監聽器已設定');
 		// 命宮與福德宮主星分析
 		async function updateMingFuAnalysis() {
 			try {
@@ -124,36 +131,59 @@
 					console.warn('找不到星盤表格');
 					return;
 				}
-				
-				// 獲取命宮行 (透過名稱查詢)
-				const mingRow = Array.from(starTable.querySelectorAll('tr')).find(tr =>
-					tr.querySelector('td:nth-child(2)')?.textContent?.includes('命宮')
-				);
-				// 獲取福德宮行 (透過名稱查詢)
-				const fuRow = Array.from(starTable.querySelectorAll('tr')).find(tr =>
-					tr.querySelector('td:nth-child(2)')?.textContent?.includes('福德宮')
-				);
-				
-				console.log('命宮行:', mingRow);
-				console.log('福德宮行:', fuRow);
-				
-				const mingStar = mingRow?.querySelector('td:nth-child(3)')?.textContent?.trim();
-				const fuStar = fuRow?.querySelector('td:nth-child(3)')?.textContent?.trim();
-				
-				console.log('命宮主星:', mingStar);
-				console.log('福德宮主星:', fuStar);
-				
-				if (!mingStar || !fuStar) {
-					console.warn('無法獲取命宮或福德宮主星，請確認排盤已完成');
-					console.log('當前星盤表格HTML:', starTable.innerHTML);
+
+				// 檢查星盤表格是否已載入內容
+				if (starTable.innerHTML.trim() === '') {
+					console.warn('星盤表格內容為空，請先完成排盤');
 					return;
 				}
 
-/*				
+				// 獲取命宮行 (透過名稱查詢)
+				const mingRow = Array.from(starTable.querySelectorAll('tr')).find(tr => {
+					try {
+						return tr.querySelector('td:nth-child(2)')?.textContent?.includes('命宮');
+					} catch (e) {
+						console.error('查詢命宮行時出錯:', e);
+						return false;
+					}
+				});
+
+				// 獲取福德宮行 (透過名稱查詢)
+				const fuRow = Array.from(starTable.querySelectorAll('tr')).find(tr => {
+					try {
+						return tr.querySelector('td:nth-child(2)')?.textContent?.includes('福德宮');
+					} catch (e) {
+						console.error('查詢福德宮行時出錯:', e);
+						return false;
+					}
+				});
+
+				if (!mingRow || !fuRow) {
+					console.warn('找不到命宮或福德宮行');
+					return;
+				}
+
+				let mingStar, fuStar;
+				try {
+					mingStar = mingRow.querySelector('td:nth-child(3)')?.textContent?.trim();
+					fuStar = fuRow.querySelector('td:nth-child(3)')?.textContent?.trim();
+				} catch (e) {
+					console.error('獲取主星名稱時出錯:', e);
+					return;
+				}
+
+				console.log('命宮主星:', mingStar);
+				console.log('福德宮主星:', fuStar);
+
+				if (!mingStar || !fuStar) {
+					console.warn('無法獲取命宮或福德宮主星，請確認排盤已完成');
+					return;
+				}
+
 				let analysis = '<div class="star-analysis-container">';
 				
-				// 從 ziwei_star_analysis.txt 獲取命宮分析
-				const mingAnalysis = await getStarAnalysisFromText(mingStar, '命宮');
+				// 從API獲取命宮分析
+				const mingAnalysis = await getStarAnalysis(mingStar, '命宮');
 				analysis += `
 					<div class="star-analysis-section">
 						<h3>命宮(${mingStar})基本分析</h3>
@@ -161,9 +191,9 @@
 					</div>
 				`;
 				
-				// 從 ziwei_star_analysis.txt 獲取福德宮分析
+				// 從API獲取福德宮分析
 				console.log('開始獲取福德宮分析，主星:', fuStar);
-				const fuAnalysis = await getStarAnalysisFromText(fuStar, '福德宮');
+				const fuAnalysis = await getStarAnalysis(fuStar, '福德宮');
 				console.log('福德宮分析結果:', fuAnalysis);
 				analysis += `
 					<div class="star-analysis-section">
@@ -173,7 +203,6 @@
 				`;
 				
 				analysis += '</div>'; // 關閉容器
-*/				
 				const analysisDiv = document.getElementById('mingfu-analysis');
 				if (analysisDiv) {
 					console.log('找到 mingfu-analysis div, 更新內容:', analysis);
@@ -186,19 +215,62 @@
 			}
 		}
 
-
+		console.log('開始載入主星分布表格...');
 		// 從數據庫API獲取主星分析
 		async function getStarAnalysis(starName, palaceName) {
+			// 參數驗證
+			console.log('開始驗證參數:', {starName, palaceName});
+			if (!starName || typeof starName !== 'string' || !palaceName || typeof palaceName !== 'string') {
+				console.error('無效的參數:', {starName, palaceName});
+				return '無效的主星或宮位名稱';
+			}
+
+			const controller = new AbortController();
+			const timeoutId = setTimeout(() => {
+				console.warn(`獲取 ${starName}(${palaceName}) 分析資料超時`);
+				controller.abort();
+			}, 5000);
+
 			try {
-				const response = await fetch(`/api/star-analysis?star=${encodeURIComponent(starName)}&palace=${encodeURIComponent(palaceName)}`);
+				console.log(`開始獲取 ${starName}(${palaceName}) 分析資料...`);
+				const apiUrl = `/api/star-analysis?star=${encodeURIComponent(starName)}&palace=${encodeURIComponent(palaceName)}`;
+				console.debug('API URL:', apiUrl);
+
+				const response = await fetch(apiUrl, {
+					signal: controller.signal,
+					headers: {
+						'Content-Type': 'application/json',
+						'Accept': 'application/json'
+					},
+					cache: 'no-store' // 避免快取問題
+				});
+
 				if (!response.ok) {
-					throw new Error(`API請求失敗: ${response.status}`);
+					const errorText = await response.text();
+					console.error(`API 請求失敗 (${response.status}):`, errorText);
+					throw new Error(`API 請求失敗: ${response.status} - ${errorText}`);
 				}
+
 				const data = await response.json();
+				console.debug(`成功獲取 ${starName}(${palaceName}) 分析資料:`, data);
+				
+				// 驗證回應資料格式
+				if (!data || typeof data !== 'object' || !('analysis' in data)) {
+					console.error('無效的API回應格式:', data);
+					return '無效的分析資料格式';
+				}
+				
 				return data.analysis || '暫無此主星的分析資料';
 			} catch (error) {
-				console.error('獲取主星分析失敗:', error);
-				throw error;
+				if (error.name === 'AbortError') {
+					console.error(`獲取 ${starName}(${palaceName}) 分析資料超時`);
+					return '請求超時，請稍後再試';
+				}
+				console.error(`獲取 ${starName}(${palaceName}) 分析資料時出錯:`, error);
+				return '獲取分析資料時發生錯誤';
+			} finally {
+				clearTimeout(timeoutId);
+				console.log(`完成 ${starName}(${palaceName}) 分析資料請求處理`);
 			}
 		}
 	});
