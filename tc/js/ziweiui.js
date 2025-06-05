@@ -422,9 +422,9 @@ fetchStarAnalysis: async function(palace, star, elementId) {
 				                            <div class="star-analysis-section">
 				                                <div class="palace-analysis-column">三方四正總格局分析
 				                                    ${sizhengResults.map((palace, index) => {
-				                                        const palaceType = index === 0 ? '命宮' :
-				                                                         index === 1 ? '事業宮' :
-				                                                         index === 2 ? '財帛宮' : '遷移宮';
+				                                        const palaceType = index === 0 ? '命宮:' :
+				                                                         index === 1 ? '事業宮:' :
+				                                                         index === 2 ? '財帛宮:' : '遷移宮:';
 				                                        return `<div class="palace-row">${analyzePalaceStars(palace.stars, palaceType)}</div>`;
 				                                    }).join('')}
 				                                </div>
