@@ -228,6 +228,54 @@ body {
   line-height: 1.4;
 }
 
+/* 聊天信息樣式 */
+.chat-info {
+    width: 100%;
+    max-width: 800px;
+    margin: 15px auto;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
+}
+
+.chat-info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.chat-message {
+    padding: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.chat-message.good {
+    border-left: 4px solid #22c55e;
+}
+
+.chat-message.warning {
+    border-left: 4px solid #f59e0b;
+}
+
+.chat-message.danger {
+    border-left: 4px solid #ef4444;
+}
+
+.chat-message .title {
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.chat-message .content {
+    color: #334155;
+    line-height: 1.6;
+}
+
 #analysis tr + tr {
   margin-top: 3px;
 }
