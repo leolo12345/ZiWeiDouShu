@@ -368,6 +368,52 @@ function getStarAnalysis(starName, palaceName) {
     });
 }
 
+// 從數據庫獲取四化星分析
+function getSihuaAnalysis(starName, transformationType) {
+    return new Promise((resolve, reject) => {
+        fetch(`/ziwei/api/sihua-analysis?star=${encodeURIComponent(starName)}&transformation_type=${encodeURIComponent(transformationType)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (!data || !data.analysis) {
+                    throw new Error('Invalid sihua analysis data received');
+                }
+                resolve(data.analysis);
+            })
+            .catch(error => {
+                console.error(`獲取${starName}化${transformationType}的分析失敗:`, error);
+                reject(error);
+            });
+    });
+}
+
+// 從數據庫獲取所有四化星分析
+function getAllSihuaAnalysis() {
+    return new Promise((resolve, reject) => {
+        fetch('/ziwei/api/sihua-analysis-all')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (!data || !data.analyses) {
+                    throw new Error('Invalid sihua analysis data received');
+                }
+                resolve(data.analyses);
+            })
+            .catch(error => {
+                console.error('獲取所有四化星分析失敗:', error);
+                reject(error);
+            });
+    });
+}
+
 // 初始化數據
 function initializeData() {
     Promise.all([

@@ -76,18 +76,39 @@ body { padding: 10px 25px;margin: 0;background-image:url('../img/star.png');back
 
 /* 星曜分析容器樣式 */
 .star-analysis-container {
-  margin: 15px 0;
-  padding: 10px;
+  margin: 10px 0;
+  padding: 8px;
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
+/* 分析表格樣式 */
+#analysis tr {
+  margin-bottom: 3px;
+  display: block;
+}
+
+#analysis td {
+  padding: 3px 0;
+  line-height: 1.4;
+}
+
+#analysis tr + tr {
+  margin-top: 3px;
+}
+
 .star-analysis-section {
-  margin-bottom: 20px;
-  padding: 15px;
+  margin-top: 3px;
+  margin-bottom: 3px;
+  padding: 3px;
   background-color: #f8f8f8;
   border-left: 4px solid #009879;
+}
+
+#mingfu-analysis {
+  margin-top: 3px;
+  padding-top: 3px;
 }
 
 .star-analysis-section h3 {

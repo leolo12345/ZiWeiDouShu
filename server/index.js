@@ -254,6 +254,92 @@ app.get('/api/star-analysis', (req, res) => {
   }
 });
 
+// 獲取所有四化星分析
+app.get('/api/sihua-analysis-all', (req, res) => {
+  try {
+    console.log('[API] 獲取所有四化星分析');
+
+    const db = new sqlite3.Database(dbPath);
+    const sql = `SELECT * FROM transformation_star_analysis`;
+    
+    console.log('[DB] 執行查詢:', sql);
+    const queryStart = Date.now();
+    
+    db.all(sql, [], (err, rows) => {
+      console.log('[DB] 查詢耗時:', Date.now() - queryStart, 'ms');
+      
+      if (err) {
+        console.error('[DB][ERROR] 查詢錯誤:', {
+          message: err.message,
+          stack: err.stack,
+          timestamp: new Date().toISOString()
+        });
+        return res.status(500).json({ error: err.message, analyses: [] });
+      }
+      
+      console.log('[DB] 查詢結果:', rows ? `找到${rows.length}條記錄` : '無記錄');
+      res.json({
+        analyses: rows || [],
+        error: null
+      });
+      db.close();
+    });
+  } catch (e) {
+    console.error('[API][ERROR] 四化星分析處理異常:', {
+      message: e.message,
+      stack: e.stack,
+      timestamp: new Date().toISOString()
+    });
+    res.status(500).json({ error: '伺服器內部錯誤', analyses: [] });
+  }
+});
+
+// 獲取單個四化星分析
+app.get('/api/sihua-analysis', (req, res) => {
+  try {
+    const { star, transformation_type } = req.query;
+    console.log('[API] 四化星分析請求參數:', { star, transformation_type });
+    
+    if (!star || !transformation_type) {
+      console.warn('[API][WARN] 缺少必要參數');
+      return res.status(400).json({ error: '缺少star或transformation_type參數', analysis: '' });
+    }
+
+    const db = new sqlite3.Database(dbPath);
+    const sql = `SELECT analysis FROM transformation_star_analysis WHERE star = ? AND transformation_type = ?`;
+    
+    console.log('[DB] 執行查詢:', sql, [star, transformation_type]);
+    const queryStart = Date.now();
+    
+    db.get(sql, [star, transformation_type], (err, row) => {
+      console.log('[DB] 查詢耗時:', Date.now() - queryStart, 'ms');
+      
+      if (err) {
+        console.error('[DB][ERROR] 查詢錯誤:', {
+          message: err.message,
+          stack: err.stack,
+          timestamp: new Date().toISOString()
+        });
+        return res.status(500).json({ error: err.message, analysis: '' });
+      }
+      
+      console.log('[DB] 查詢結果:', row ? '找到記錄' : '無匹配記錄');
+      res.json({
+        analysis: row ? row.analysis : '找不到對應分析',
+        error: null
+      });
+      db.close();
+    });
+  } catch (e) {
+    console.error('[API][ERROR] 四化星分析處理異常:', {
+      message: e.message,
+      stack: e.stack,
+      timestamp: new Date().toISOString()
+    });
+    res.status(500).json({ error: '伺服器內部錯誤', analysis: '' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`服務器運行中: http://localhost:${PORT}`);
 });

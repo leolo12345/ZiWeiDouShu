@@ -55,6 +55,52 @@ var ziweiUI = {
 		//$("#zwHome").html("");
 		document.getElementById("zwHome").innerHTML = "";
 },
+// 調用API獲取四化星分析
+fetchSihuaAnalysis: async function(transformationType, star) {
+    try {
+        console.group(`[四化星分析] ${transformationType} - ${star}`);
+        console.log('開始發送請求...');
+        
+        // 檢查參數有效性
+        if (!transformationType || !star) {
+            throw new Error('缺少必要參數');
+        }
+        
+        const apiUrl = `http://localhost:3001/api/sihua-analysis?star=${encodeURIComponent(star)}&transformation_type=${encodeURIComponent(transformationType)}`;
+        console.log('API URL:', apiUrl);
+        
+        const response = await fetch(apiUrl, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            console.error('API請求失敗:', {
+                status: response.status,
+                statusText: response.statusText
+            });
+            throw new Error(`四化星分析API請求失敗: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('API回應數據:', data);
+        
+        const result = data.analysis || '無分析內容';
+        console.log('處理後的分析結果:', result);
+        console.groupEnd();
+        return result;
+    } catch (error) {
+        console.error('四化星分析請求失敗:', {
+            message: error.message,
+            stack: error.stack
+        });
+        console.groupEnd();
+        throw error;
+    }
+},
+
 // 調用API獲取星曜分析
 fetchStarAnalysis: async function(palace, star, elementId) {
     try {
@@ -268,7 +314,63 @@ fetchStarAnalysis: async function(palace, star, elementId) {
 				+ "<div>"+ ziwei.getFiveElement() +"</div>"
 				+ "<div>"+ ziwei.getYinYangGender()+"</div>"
 				+ "</div>";
-*/			
+*/
+			// 添加四化星分析區域
+			let sihuaAnalysisContainer = document.createElement('tr');
+			sihuaAnalysisContainer.innerHTML = '<td id="sihua-analysis" style="padding-left:20px;"></td>';
+			document.getElementById('mingfu-analysis').parentNode.nextElementSibling.appendChild(sihuaAnalysisContainer);
+
+			// 獲取四化星分析
+			try {
+				console.log('開始處理四化星分析...');
+				const transformationTypes = ['化祿', '化權', '化科', '化忌'];
+				let sihuaResults = [];
+				
+				for (const type of transformationTypes) {
+					for (let i = 0; i < 12; i++) {
+						// 使用正則表達式找出四化星
+						const stars = zw[i].StarA.filter(star => star.includes(type));
+						for (const star of stars) {
+							// 去掉"化"字以匹配數據庫中的格式
+							const transformationType = type.replace('化', '');
+							// 清理星曜名稱，只保留前兩個字
+							const cleanedStar = star.replace(/<[^>]*>/g, "").substring(0, 2);
+							console.group('處理四化星');
+							console.log('原始星曜:', star);
+							console.log('清理後星曜:', cleanedStar);
+							console.log('四化類型:', type);
+							const analysis = await this.fetchSihuaAnalysis(transformationType, cleanedStar);
+							if (analysis) {
+								sihuaResults.push({type, star: cleanedStar, analysis});
+							}
+						}
+					}
+				}
+				
+				// 更新四化星分析顯示
+				const sihuaContainer = document.getElementById('sihua-analysis');
+				if (sihuaContainer && sihuaResults.length > 0) {
+					const sihuaHTML = sihuaResults.map(({type, star, analysis}) => `
+						<div class="star-analysis-section">
+							<h3>${type}分析</h3>
+							<div class="star-analysis-content">${star}: ${analysis}</div>
+						</div>
+					`).join('');
+					sihuaContainer.innerHTML = sihuaHTML;
+				}
+			} catch (error) {
+				console.error('四化星分析失敗:', error);
+				const sihuaContainer = document.getElementById('sihua-analysis');
+				if (sihuaContainer) {
+					sihuaContainer.innerHTML = `
+					    <div class="error">
+					        <p>四化星分析載入失敗</p>
+					        <p>錯誤原因: ${error.message}</p>
+					    </div>`;
+					console.error('完整錯誤信息:', error);
+				}
+			}
+
 			if (analysisResults.length > 0) {
 				htmlContent += analysisResults.map(text => {
 					if (typeof text === 'string') {
@@ -369,13 +471,13 @@ window.addEventListener('load' ,function(){
 //開始使用
 	ziweiUI.initial();
 	document.querySelector("input[type=button]").addEventListener('click',async function () {
-	try {
-		await ziweiUI.genZiwei();
-	} catch (e) {
-	} finally {
-		console.groupEnd();
-	}
-});
+		try {
+			await ziweiUI.genZiwei();
+		} catch (e) {
+		} finally {
+			console.groupEnd();
+		}
+	});
 	let s = document.querySelectorAll("select");
 	for (i=0;i<s.length;i++){
 		s[i].addEventListener('change',async function () {
