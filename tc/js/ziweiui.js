@@ -1,4 +1,55 @@
 /*紫微斗數 Chinese Astrology Zi Wei Dou Shu*/
+
+// 獲取三方宮位 (同宮、對宮、三合)
+function getSanfangPalaces(mingGongIndex) {
+    console.log('獲取三方宮位，命宮索引:', mingGongIndex);
+    
+    // 命宮本身
+    const ming = mingGongIndex;
+    
+    // 事業宮（命宮天干之陽干順二，陰干退十）
+    const shiye = (mingGongIndex + 10) % 12;
+    
+    // 財帛宮（事業宮天干之陽干順二，陰干退十）
+    const caibo = (shiye + 10) % 12;
+    
+    console.log('三方宮位結果:', {ming, shiye, caibo});
+    return [ming, shiye, caibo];
+}
+
+// 獲取四正宮位 (同宮、對宮、刑、沖)
+function getSizhengPalaces(mingGongIndex) {
+    // 四正為三方加上遷移宮
+    const sanfang = getSanfangPalaces(mingGongIndex);
+    
+    // 遷移宮（財帛宮天干之陽干順二，陰干退十）
+    const qianyi = ((mingGongIndex + 10 + 10 + 10) % 12);
+    
+    console.log('四正宮位結果:', {
+        三方: sanfang,
+        遷移: qianyi
+    });
+    return [...sanfang, qianyi];
+}
+
+// 獲取刑宮 (地支相刑關係)
+function getXingPalace(palaceIndex) {
+    // 地支相刑關係: 子刑卯，丑刑戌，寅刑巳，辰刑辰，午刑午，未刑丑，申刑寅，酉刑酉，亥刑亥
+    const xingMap = {
+        0: 3,  // 子刑卯
+        1: 10, // 丑刑戌
+        2: 5,  // 寅刑巳
+        4: 4,  // 辰自刑
+        6: 6,  // 午自刑
+        7: 1,  // 未刑丑
+        8: 2,  // 申刑寅
+        9: 9,  // 酉自刑
+        11: 11 // 亥自刑
+    };
+    
+    return xingMap[palaceIndex] !== undefined ? xingMap[palaceIndex] : palaceIndex;
+}
+
 var ziweiUI = {
 	//主星列印方向 true:由右向左,false:由左向右
 	right2left:false,
@@ -23,8 +74,7 @@ var ziweiUI = {
 	//initial    	  
 	initial:function (){
 	  //畫紫微斗數空表格
-	  //document.getElementById("container").innerHTML="<div id='queryDiv'><h2>紫微斗數命盤</h2><div>西元<select id='sel_Year'></select> 年<select id='sel_Month'></select> 月<select id='sel_Day'></select> 日<select id='sel_Hour'></select> 時<input type='radio' id='gender' name='gender' value='M' checked>男<input type='radio' name='gender' value='F'>女<input type='button' value='現在時間*' id='btnNowDate'></div></div><div class='ziwei'><div><div id='zw6'></div><div id='zw7'></div><div id='zw8'></div><div id='zw9'></div></div><div><div id='zw5'></div><div id='zw4'></div><div id='zwHome' class='zwDivCenter'></div><div id='zw10'></div><div id='zw11'></div></div><div><div id='zw3'></div><div id='zw2'></div><div id='zw1'></div><div id='zw12'></div></div></div>";
-	  document.getElementById("container").innerHTML="<div class='zwDivHeader'><h2>紫微斗數命盤 </h2></div></div><div class='ziwei'><div id='zw6'></div><div id='zw7'></div><div id='zw8'></div><div id='zw9'></div><div id='zw5'></div><div id='zwHome' class='zwDivCenter'></div><div id='zw10'></div><div id='zw4'></div><div id='zw11'></div><div id='zw3'></div><div id='zw2'></div><div id='zw1'></div><div id='zw12'></div>";
+	  document.getElementById("container").innerHTML="<div class='zwDivHeader'><h2>紫微斗數命盤 </h2></div></div><div class='ziwei'><div id='zw6'></div><div id='zw7'></div><div id='zw8'></div><div id='zw9'></div><div id='zw5'></div><div id='zwHome' class='zwDivCenter'><div id='basicInfo'><div>國曆：<span id='solarDate'></span></div><div>農曆：<span id='lunarDate'></span></div><div>生肖：<span id='zodiac'></span></div><div>五行局：<span id='fiveElement'></span></div><div>陰陽性別：<span id='genderType'></span></div></div></div><div id='zw10'></div><div id='zw4'></div><div id='zw11'></div><div id='zw3'></div><div id='zw2'></div><div id='zw1'></div><div id='zw12'></div>";
 	  function addOption(id,a,b){
 	  	for (i=a;i<=b;i++){ 
 				let op = document.createElement('option');
@@ -112,13 +162,23 @@ fetchStarAnalysis: async function(palace, star, elementId) {
             throw new Error('缺少必要參數: palace或star');
         }
 
-        // 確保分析區域存在
+        // 建立分析區域容器
         let analysisContainer = document.getElementById('mingfu-analysis');
+        let sanfangContainer = document.getElementById('sanfang-analysis');
+        
         if (!analysisContainer) {
             analysisContainer = document.createElement('div');
             analysisContainer.id = 'mingfu-analysis';
             analysisContainer.className = 'star-analysis-container';
             document.getElementById('zwHome').appendChild(analysisContainer);
+        }
+        
+        if (!sanfangContainer) {
+            sanfangContainer = document.createElement('div');
+            sanfangContainer.id = 'sanfang-analysis';
+            sanfangContainer.className = 'star-analysis-container';
+            // 將三方四正分析容器插入到命福分析容器之後
+            analysisContainer.parentNode.insertBefore(sanfangContainer, analysisContainer.nextSibling);
         }
 
         // 發送API請求並等待響應
@@ -296,6 +356,86 @@ fetchStarAnalysis: async function(palace, star, elementId) {
 				}));
 				analysisResults.push(...fudeAnalysisResults.filter(Boolean));
 			}
+
+				        // 獲取命宮三方四正分析
+				        const mingPalaceIndex = zw.findIndex(palace => palace.MangB.includes("命宮"));
+				        if (mingPalaceIndex !== -1) {
+				            // 獲取三方宮位
+				            const sanfangIndices = getSanfangPalaces(mingPalaceIndex);
+				            const sanfangResults = sanfangIndices.map(index => {
+				                const palace = zw[index];
+				                // 過濾主星
+				                const stars = palace.StarA
+				                    .filter(star => !star.startsWith("化"))
+				                    .map(star => star.replace(/<[^>]*>/g, "").substring(0, 2));
+				                
+				                return {
+				                    index: index,
+				                    name: palace.MangB,
+				                    stars: stars
+				                };
+				            });
+
+				            // 獲取四正宮位
+				            const sizhengIndices = getSizhengPalaces(mingPalaceIndex);
+				            const sizhengResults = sizhengIndices.map(index => {
+				                const palace = zw[index];
+				                const stars = palace.StarA
+				                    .filter(star => !star.startsWith("化"))
+				                    .map(star => star.replace(/<[^>]*>/g, "").substring(0, 2));
+				                
+				                return {
+				                    index: index,
+				                    name: palace.MangB,
+				                    stars: stars
+				                };
+				            });
+
+				            // 生成三方四正分析HTML
+				                        const analyzePalaceStars = (stars, palaceType) => {
+				                            const analyses = stars.map(star => {
+				                                let analysis = '';
+				                                switch (star) {
+				                                    case '紫微': analysis = '主權貴尊榮'; break;
+				                                    case '天機': analysis = '主聰明智慧'; break;
+				                                    case '太陽': analysis = '主光明正氣'; break;
+				                                    case '武曲': analysis = '主財帛權威'; break;
+				                                    case '天同': analysis = '主和善化凶'; break;
+				                                    case '文昌': analysis = '主文書才華'; break;
+				                                    case '天梁': analysis = '主端正清高'; break;
+				                                    case '巨門': analysis = '主口才辯析'; break;
+				                                    case '貪狼': analysis = '主欲望進取'; break;
+				                                    case '太陰': analysis = '主陰柔暗藏'; break;
+				                                    case '天相': analysis = '主仁慈福德'; break;
+				                                    case '廉貞': analysis = '主剛直固執'; break;
+				                                    case '破軍': analysis = '主變革創新'; break;
+				                                    case '七殺': analysis = '主權威剛強'; break;
+				                                    case '天府': analysis = '主富貴祿位'; break;
+				                                    default: analysis = '星曜待分析';
+				                                }
+				                                return `[${star}]:${analysis}`;
+				                            });
+				                            return `${palaceType} ${analyses.join(' ')}`;
+				                        };
+
+				                        const sanfangSizhengHTML = `
+				                            <div class="star-analysis-section">
+				                                <div class="palace-analysis-column">三方四正總格局分析
+				                                    ${sizhengResults.map((palace, index) => {
+				                                        const palaceType = index === 0 ? '命宮' :
+				                                                         index === 1 ? '事業宮' :
+				                                                         index === 2 ? '財帛宮' : '遷移宮';
+				                                        return `<div class="palace-row">${analyzePalaceStars(palace.stars, palaceType)}</div>`;
+				                                    }).join('')}
+				                                </div>
+				                            </div>
+				                        `;
+				            // 更新三方四正分析容器
+				            const sanfangContainer = document.getElementById('geju-analysis');
+				            if (sanfangContainer) {
+				                sanfangContainer.innerHTML = sanfangSizhengHTML;
+				            }
+				        }
 			
 			// 確保所有分析完成後更新UI
 			// 確保使用正確的分析容器
@@ -304,17 +444,14 @@ fetchStarAnalysis: async function(palace, star, elementId) {
 				return;
 			}
 				
-			// 等待所有分析完成後構建HTML內容
-			let htmlContent = "<div class='basic-info'>";
+			// 更新命盤中心的基本資訊
+			document.getElementById('solarDate').textContent = ziwei.getSolarDay();
+			document.getElementById('lunarDate').textContent = ziwei.getLunarDay();
+			document.getElementById('zodiac').textContent = ziwei.getShengXiao();
+			document.getElementById('fiveElement').textContent = ziwei.getFiveElement();
+			document.getElementById('genderType').textContent = ziwei.getYinYangGender();
 
-/*			+ "<h3>基本資訊</h3>"
-				+ "國曆：" + ziwei.getSolarDay() + "<br>"
-				+ "農曆：" + ziwei.getLunarDay()+ "<br>"
-				+ "生肖：【" + ziwei.getShengXiao() + "】"+"<br>"
-				+ "<div>"+ ziwei.getFiveElement() +"</div>"
-				+ "<div>"+ ziwei.getYinYangGender()+"</div>"
-				+ "</div>";
-*/
+			let htmlContent = '';
 			// 添加四化星分析區域
 			let sihuaAnalysisContainer = document.createElement('tr');
 			sihuaAnalysisContainer.innerHTML = '<td id="sihua-analysis" style="padding-left:20px;"></td>';
