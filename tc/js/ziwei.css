@@ -1,47 +1,176 @@
-body { padding: 10px 25px;margin: 0;background-image:url('../img/star.png');background-repeat:repeat;}
+body {
+    padding: 10px 25px;
+    margin: 0;
+    background: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 50%, #0284c7 100%);
+    min-height: 100vh;
+    color: #0f172a;
+    font-family: 'Microsoft JhengHei', sans-serif;
+}
+
+/* Modern Glass Effect Container */
+.ziwei, .zwDivHeader {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
+}
 .ziwei{ display: grid;border:4px darkgray groove; padding:1px; height:90%;
 	grid-template-columns: repeat(4,25%);
 	grid-template-rows: repeat(4,25%);}
-.ziwei,.zwDivHeader{ width:60%; }
+.ziwei,.zwDivHeader{ width:100%; }
 @media only screen and (max-width:1024px){
 .ziwei,.zwDivHeader{ width:100%; } body{padding-bottom: 20px;}}
 .zwDivCenter{ grid-column-start: 2; grid-column-end: 4; grid-row-start: 2; grid-row-end: 4; }
-.ziwei>div { border:1px solid #B7B7B7;margin:1px;position:relative;font-size:1em;}
+.ziwei>div {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    margin: 2px;
+    position: relative;
+    font-size: 1em;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
+    transition: all 0.3s ease;
+}
+
+.ziwei>div:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
 .zwDivHeader,.zwDivHeader h2{ margin:10px 0; position:relative;}
 .zwDivHeader>div{top:0;right:0;}
-.zwDivHeader div { margin-bottom:5px; padding:5px; background-color:#CCFFCC;}
+.zwDivHeader div {
+    margin-bottom:5px;
+    padding:5px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 .zwDivHeader input[type=button],select,input[type=radio]:first-of-type{margin-left:15px;}
-.zwDivCenter{position:relative;border:1px solid #B7B7B7;margin:1px;font-weight: bold;}
+.zwDivCenter{
+    position:relative;
+    border:1px solid rgba(255, 255, 255, 0.2);
+    margin: 15px auto;
+    padding: 15px;
+    width: 100%;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
+}
 .zwDivCenter div{text-align:left;margin:10px;}
 .zwDivCenter .zwcopy{bottom:0;right:0;font-size:1em;font-weight: normal;}
 .StarA,.StarB,.StarC,.MangA,.MangB,.MangC,.MangY10,.MangY1,.zwcopy,.zwDivHeader>div{position:absolute;}
 .starDiv{border:0px solid blue;margin:5px;}
-.StarA{top:0;color:blue;}
-.StarA span{color:Fuchsia;}
-.Star4 {margin-top:8px;}
-.Star4 span{color:#8000FF;font-weight:normal;}
-.StarB{color:Red;top:0;}
-.StarC{text-align: right;top:75px;right:0;width:100%;}
+.StarA{
+    top:0;
+    color: #0ea5e9;
+    font-size: 1.2em;
+    font-weight: 600;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.9),
+                 -1px -1px 0 rgba(255, 255, 255, 0.9);
+}
+.StarA span{
+    color: #db2777;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.9),
+                 -1px -1px 0 rgba(255, 255, 255, 0.9);
+}
+.Star4 {
+    margin-top:8px;
+    font-size: 1.1em;
+}
+.Star4 span{
+    color: #6d28d9;
+    font-weight: 500;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.9),
+                 -1px -1px 0 rgba(255, 255, 255, 0.9);
+}
+.StarB{
+    color: #dc2626;
+    font-size: 1.2em;
+    font-weight: 600;
+    top:0;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.9),
+                 -1px -1px 0 rgba(255, 255, 255, 0.9);
+}
+.StarC{
+    text-align: right;
+    top:75px;
+    right:0;
+    width:100%;
+    color: #e0e0e0;
+    text-shadow: 0 0 5px rgba(224, 224, 224, 0.5);
+}
 .StarA,.StarC{text-align: right;}
 .StarAll{display:none;}
-.StemBranch{width:100%;color:#006400;font-weight:bold;}
+.StemBranch{
+    width:100%;
+    color:#4caf50;
+    font-weight:bold;
+    text-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
 .MangB{width:100%;font-weight:bold;}
 .MangC{color:blue;}
 .MangA,.StemBranch,.MangB,.MangC{bottom:0;}
 .MangY10,.MangY1{width:100%; height:1.5em;font-size:0.8em;}
 .MangY10,.MangY1,.StemBranch,.MangB{text-align: center;}
-.MangY10{bottom:3.2em;color:purple;}
-.MangY1{bottom:1.8em;color:navy;}
+.MangY10{
+    bottom:3.2em;
+    color:#e040fb;
+    text-shadow: 0 0 5px rgba(224, 64, 251, 0.5);
+}
+.MangY1{
+    bottom:1.8em;
+    color:#40c4ff;
+    text-shadow: 0 0 5px rgba(64, 196, 255, 0.5);
+}
 .zwStarRight,.MangC{right:0;}
 .zwStarLeft,.MangA{left:0;}
 
 /* 星曜表格樣式 */
 .ziwei-table {
-  width: 70%;
+  width: 100%;
   border-collapse: collapse;
-  margin: 20px 0;
-  font-size: 0.9em;
-  box-shadow: 0 0 20px rgba(0,0,0,0.15);
+  margin: 20px auto;
+  font-size: 1.1em;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ziwei-table th,
+.ziwei-table td {
+  padding: 12px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e0e0e0;
+  font-weight: 500;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+.ziwei-table tr:hover td {
+  background-color: rgba(14, 165, 233, 0.1);
+  transition: all 0.3s ease;
+}
+
+.ziwei-table th,
+.ziwei-table td {
+  padding: 12px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e0e0e0;
+}
+
+.ziwei-table thead tr {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.ziwei-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
 }
 
 .ziwei-table thead tr {
@@ -76,11 +205,16 @@ body { padding: 10px 25px;margin: 0;background-image:url('../img/star.png');back
 
 /* 星曜分析容器樣式 */
 .star-analysis-container {
-  margin: 10px 0;
-  padding: 8px;
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  width: 100%;
+  margin: 15px auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e0e0e0;
 }
 
 /* 分析表格樣式 */
@@ -99,9 +233,9 @@ body { padding: 10px 25px;margin: 0;background-image:url('../img/star.png');back
 }
 
 .star-analysis-section {
-  margin-top: 3px;
-  margin-bottom: 3px;
-  padding: 3px;
+  width: 100%;
+  margin: 15px auto;
+  padding: 15px;
   background-color: #f8f8f8;
   border-left: 4px solid #009879;
 }
