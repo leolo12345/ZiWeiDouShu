@@ -178,7 +178,7 @@ fetchStarAnalysis: async function(palace, star, elementId) {
             sanfangContainer.id = 'sanfang-analysis';
             sanfangContainer.className = 'star-analysis-container';
             // 將三方四正分析容器插入到命福分析容器之後
-            analysisContainer.parentNode.insertBefore(sanfangContainer, analysisContainer.nextSibling);
+            // analysisContainer.parentNode.insertBefore(sanfangContainer, analysisContainer.nextSibling);
         }
 
         // 發送API請求並等待響應
@@ -394,41 +394,433 @@ fetchStarAnalysis: async function(palace, star, elementId) {
 				            // 生成三方四正分析HTML
 				                        const analyzePalaceStars = (stars, palaceType) => {
 				                            const analyses = stars.map(star => {
-				                                let analysis = '';
-				                                switch (star) {
-				                                    case '紫微': analysis = '主權貴尊榮'; break;
-				                                    case '天機': analysis = '主聰明智慧'; break;
-				                                    case '太陽': analysis = '主光明正氣'; break;
-				                                    case '武曲': analysis = '主財帛權威'; break;
-				                                    case '天同': analysis = '主和善化凶'; break;
-				                                    case '文昌': analysis = '主文書才華'; break;
-				                                    case '天梁': analysis = '主端正清高'; break;
-				                                    case '巨門': analysis = '主口才辯析'; break;
-				                                    case '貪狼': analysis = '主欲望進取'; break;
-				                                    case '太陰': analysis = '主陰柔暗藏'; break;
-				                                    case '天相': analysis = '主仁慈福德'; break;
-				                                    case '廉貞': analysis = '主剛直固執'; break;
-				                                    case '破軍': analysis = '主變革創新'; break;
-				                                    case '七殺': analysis = '主權威剛強'; break;
-				                                    case '天府': analysis = '主富貴祿位'; break;
-				                                    default: analysis = '星曜待分析';
+				                                let analysis = [];
+				                                switch (palaceType) {
+				                                    case '命宮':
+				                                        switch (star) {
+				                                            case '巨門':
+				                                                analysis = [
+				                                                    '在命宮主個性靈活變通',
+				                                                    '口才出眾善於表達',
+				                                                    '應變能力特別強'
+				                                                ];
+				                                                break;
+				                                            case '紫微':
+				                                                analysis = [
+				                                                    '在命宮主一生尊貴榮耀',
+				                                                    '性格端莊高潔有威儀',
+				                                                    '人生多得貴人提攜'
+				                                                ];
+				                                                break;
+				                                            case '天機':
+				                                                analysis = [
+				                                                    '在命宮主聰明智慧過人',
+				                                                    '思維敏捷反應快速',
+				                                                    '擅長規劃與決策'
+				                                                ];
+				                                                break;
+				                                            case '太陽':
+				                                                analysis = [
+				                                                    '在命宮主性格開朗光明',
+				                                                    '為人正直受人敬重',
+				                                                    '容易得到長輩提攜'
+				                                                ];
+				                                                break;
+				                                            case '武曲':
+				                                                analysis = [
+				                                                    '在命宮主性格剛毅',
+				                                                    '做事果斷有魄力',
+				                                                    '善於管理財務'
+				                                                ];
+				                                                break;
+				                                            case '天同':
+				                                                analysis = [
+				                                                    '在命宮主性格溫和',
+				                                                    '待人寬厚有同理心',
+				                                                    '人緣良好易得支持'
+				                                                ];
+				                                                break;
+				                                            case '廉貞':
+				                                                analysis = [
+				                                                    '在命宮主性格耿直',
+				                                                    '有原則不隨波逐流',
+				                                                    '重視道德操守'
+				                                                ];
+				                                                break;
+				                                            case '天府':
+				                                                analysis = [
+				                                                    '在命宮主性情溫厚',
+				                                                    '富貴安逸享福',
+				                                                    '人生順遂少波折'
+				                                                ];
+				                                                break;
+				                                            case '太陰':
+				                                                analysis = [
+				                                                    '在命宮主性格內斂',
+				                                                    '直覺敏銳有智慧',
+				                                                    '擅長處理細節'
+				                                                ];
+				                                                break;
+				                                            case '貪狼':
+				                                                analysis = [
+				                                                    '在命宮主性格進取',
+				                                                    '有野心追求成就',
+				                                                    '人生充滿活力'
+				                                                ];
+				                                                break;
+				                                            case '天相':
+				                                                analysis = [
+				                                                    '在命宮主慈祥和善',
+				                                                    '樂於助人積德',
+				                                                    '人緣好福運佳'
+				                                                ];
+				                                                break;
+				                                            case '天梁':
+				                                                analysis = [
+				                                                    '在命宮主端莊正直',
+				                                                    '性格開朗樂觀',
+				                                                    '人格魅力強'
+				                                                ];
+				                                                break;
+				                                            case '七殺':
+				                                                analysis = [
+				                                                    '在命宮主性格剛烈',
+				                                                    '做事雷厲風行',
+				                                                    '有領袖魄力'
+				                                                ];
+				                                                break;
+				                                            case '破軍':
+				                                                analysis = [
+				                                                    '在命宮主獨特創新',
+				                                                    '不甘平凡愛冒險',
+				                                                    '人生起伏大'
+				                                                ];
+				                                                break;
+				                                        }
+				                                        break;
+				                                    case '事業宮':
+				                                        switch (star) {
+				                                            case '巨門':
+				                                                analysis = [
+				                                                    '在事業宮主善於溝通談判',
+				                                                    '事業發展需要智慧',
+				                                                    '適合外交公關工作'
+				                                                ];
+				                                                break;
+				                                            case '紫微':
+				                                                analysis = [
+				                                                    '在事業宮主官運亨通',
+				                                                    '易得高位重用',
+				                                                    '有領導統御能力'
+				                                                ];
+				                                                break;
+				                                            case '天機':
+				                                                analysis = [
+				                                                    '在事業宮主謀略出眾',
+				                                                    '善於掌握機會',
+				                                                    '事業發展順遂'
+				                                                ];
+				                                                break;
+				                                            case '太陽':
+				                                                analysis = [
+				                                                    '在事業宮主光明磊落',
+				                                                    '事業平步青雲',
+				                                                    '易得領導賞識'
+				                                                ];
+				                                                break;
+				                                            case '武曲':
+				                                                analysis = [
+				                                                    '在事業宮主財富權位',
+				                                                    '善理財有手腕',
+				                                                    '適合經商從政'
+				                                                ];
+				                                                break;
+				                                            case '天同':
+				                                                analysis = [
+				                                                    '在事業宮主和氣生財',
+				                                                    '貴人運旺有助力',
+				                                                    '適合服務業'
+				                                                ];
+				                                                break;
+				                                            case '廉貞':
+				                                                analysis = [
+				                                                    '在事業宮主獨立自主',
+				                                                    '做事有原則',
+				                                                    '適合專業技術'
+				                                                ];
+				                                                break;
+				                                            case '天府':
+				                                                analysis = [
+				                                                    '在事業宮主穩健發展',
+				                                                    '財運亨通有積累',
+				                                                    '適合金融地產'
+				                                                ];
+				                                                break;
+				                                            case '太陰':
+				                                                analysis = [
+				                                                    '在事業宮主謀略深遠',
+				                                                    '暗中有貴人助',
+				                                                    '適合幕僚工作'
+				                                                ];
+				                                                break;
+				                                            case '貪狼':
+				                                                analysis = [
+				                                                    '在事業宮主開拓進取',
+				                                                    '事業上升快速',
+				                                                    '適合銷售創業'
+				                                                ];
+				                                                break;
+				                                            case '天相':
+				                                                analysis = [
+				                                                    '在事業宮主名利雙收',
+				                                                    '得人信任支持',
+				                                                    '適合公益慈善'
+				                                                ];
+				                                                break;
+				                                            case '天梁':
+				                                                analysis = [
+				                                                    '在事業宮主正直受重',
+				                                                    '工作穩定發展',
+				                                                    '適合公職教育'
+				                                                ];
+				                                                break;
+				                                            case '七殺':
+				                                                analysis = [
+				                                                    '在事業宮主權威顯赫',
+				                                                    '事業發展迅速',
+				                                                    '適合從政經商'
+				                                                ];
+				                                                break;
+				                                            case '破軍':
+				                                                analysis = [
+				                                                    '在事業宮主創新求變',
+				                                                    '適合自主創業',
+				                                                    '事業有起伏'
+				                                                ];
+				                                                break;
+				                                        }
+				                                        break;
+				                                    case '財帛宮':
+				                                        switch (star) {
+				                                            case '巨門':
+				                                                analysis = [
+				                                                    '在財帛宮主財運變化多端',
+				                                                    '善於把握投資機會',
+				                                                    '收入來源不固定'
+				                                                ];
+				                                                break;
+				                                            case '紫微':
+				                                                analysis = [
+				                                                    '在財帛宮主富貴雙全',
+				                                                    '理財能力出眾',
+				                                                    '易得意外之財'
+				                                                ];
+				                                                break;
+				                                            case '天機':
+				                                                analysis = [
+				                                                    '在財帛宮主財運靈活',
+				                                                    '善於投資理財',
+				                                                    '收入來源多元'
+				                                                ];
+				                                                break;
+				                                            case '太陽':
+				                                                analysis = [
+				                                                    '在財帛宮主正財亨通',
+				                                                    '財源穩定光明',
+				                                                    '易得領導提拔'
+				                                                ];
+				                                                break;
+				                                            case '武曲':
+				                                                analysis = [
+				                                                    '在財帛宮主財運亨通',
+				                                                    '理財有道富裕',
+				                                                    '適合投資理財'
+				                                                ];
+				                                                break;
+				                                            case '天同':
+				                                                analysis = [
+				                                                    '在財帛宮主財運平穩',
+				                                                    '人緣好易得財',
+				                                                    '適合合作經營'
+				                                                ];
+				                                                break;
+				                                            case '廉貞':
+				                                                analysis = [
+				                                                    '在財帛宮主財運波動',
+				                                                    '投資需謹慎',
+				                                                    '宜守成保守'
+				                                                ];
+				                                                break;
+				                                            case '天府':
+				                                                analysis = [
+				                                                    '在財帛宮主財運極佳',
+				                                                    '積累豐厚有福',
+				                                                    '適合金融投資'
+				                                                ];
+				                                                break;
+				                                            case '太陰':
+				                                                analysis = [
+				                                                    '在財帛宮主財運隱祕',
+				                                                    '收益穩定漸增',
+				                                                    '適合暗中運作'
+				                                                ];
+				                                                break;
+				                                            case '貪狼':
+				                                                analysis = [
+				                                                    '在財帛宮主財運活躍',
+				                                                    '善於開源進取',
+				                                                    '適合創業投資'
+				                                                ];
+				                                                break;
+				                                            case '天相':
+				                                                analysis = [
+				                                                    '在財帛宮主財運福佑',
+				                                                    '得財有道順遂',
+				                                                    '適合穩健投資'
+				                                                ];
+				                                                break;
+				                                            case '天梁':
+				                                                analysis = [
+				                                                    '在財帛宮主財運平順',
+				                                                    '收入穩定持久',
+				                                                    '適合固定工作'
+				                                                ];
+				                                                break;
+				                                            case '七殺':
+				                                                analysis = [
+				                                                    '在財帛宮主財運強勁',
+				                                                    '善於開拓財源',
+				                                                    '適合大額投資'
+				                                                ];
+				                                                break;
+				                                            case '破軍':
+				                                                analysis = [
+				                                                    '在財帛宮主財運變化',
+				                                                    '投資需謹慎',
+				                                                    '宜避免風險'
+				                                                ];
+				                                                break;
+				                                        }
+				                                        break;
+				                                    case '遷移宮':
+				                                        switch (star) {
+				                                            case '巨門':
+				                                                analysis = [
+				                                                    '在遷移宮主移動頻繁',
+				                                                    '適應能力特別強',
+				                                                    '善於開拓新環境'
+				                                                ];
+				                                                break;
+				                                            case '紫微':
+				                                                analysis = [
+				                                                    '在遷移宮主動則有利',
+				                                                    '遷移調動皆吉',
+				                                                    '外出發展順遂'
+				                                                ];
+				                                                break;
+				                                            case '天機':
+				                                                analysis = [
+				                                                    '在遷移宮主機動靈活',
+				                                                    '適應力強善變通',
+				                                                    '出外發展有利'
+				                                                ];
+				                                                break;
+				                                            case '太陽':
+				                                                analysis = [
+				                                                    '在遷移宮主遷移順遂',
+				                                                    '外出有貴人助',
+				                                                    '適合異地發展'
+				                                                ];
+				                                                break;
+				                                            case '武曲':
+				                                                analysis = [
+				                                                    '在遷移宮主外出得財',
+				                                                    '調動升遷順利',
+				                                                    '適合外派工作'
+				                                                ];
+				                                                break;
+				                                            case '天同':
+				                                                analysis = [
+				                                                    '在遷移宮主遷移平順',
+				                                                    '人際關係良好',
+				                                                    '外出有貴人助'
+				                                                ];
+				                                                break;
+				                                            case '廉貞':
+				                                                analysis = [
+				                                                    '在遷移宮主獨立自主',
+				                                                    '遷移變動較多',
+				                                                    '宜審慎而行'
+				                                                ];
+				                                                break;
+				                                            case '天府':
+				                                                analysis = [
+				                                                    '在遷移宮主遷移有利',
+				                                                    '外出能得財富',
+				                                                    '適合異地發展'
+				                                                ];
+				                                                break;
+				                                            case '太陰':
+				                                                analysis = [
+				                                                    '在遷移宮主遷移隱密',
+				                                                    '調動變化多端',
+				                                                    '宜靜觀待變'
+				                                                ];
+				                                                break;
+				                                            case '貪狼':
+				                                                analysis = [
+				                                                    '在遷移宮主遷移頻繁',
+				                                                    '外出機會眾多',
+				                                                    '適合創業發展'
+				                                                ];
+				                                                break;
+				                                            case '天相':
+				                                                analysis = [
+				                                                    '在遷移宮主遷移平安',
+				                                                    '外出有貴人助',
+				                                                    '適合穩定發展'
+				                                                ];
+				                                                break;
+				                                            case '天梁':
+				                                                analysis = [
+				                                                    '在遷移宮主遷移安定',
+				                                                    '調動升遷順利',
+				                                                    '適合公職發展'
+				                                                ];
+				                                                break;
+				                                            case '七殺':
+				                                                analysis = [
+				                                                    '在遷移宮主動則有成',
+				                                                    '調動升遷迅速',
+				                                                    '適合創業發展'
+				                                                ];
+				                                                break;
+				                                            case '破軍':
+				                                                analysis = [
+				                                                    '在遷移宮主變動頻繁',
+				                                                    '遷移機會眾多',
+				                                                    '宜審慎而行'
+				                                                ];
+				                                                break;
+				                                        }
+				                                        break;
 				                                }
-				                                return `[${star}]:${analysis}`;
+				                                return `[${star}]: ${analysis.join(' ')}`;
 				                            });
-				                            return `${palaceType} ${analyses.join(' ')}`;
+				                            return `<div class="star-analysis-section" bis_skin_checked="1"><h3>${palaceType}分析</h3> ${analyses.join(' ')}</div>`;
 				                        };
 
 				                        const sanfangSizhengHTML = `
-				                            <div class="star-analysis-section">
-				                                <div class="palace-analysis-column">三方四正總格局分析
 				                                    ${sizhengResults.map((palace, index) => {
-				                                        const palaceType = index === 0 ? '命宮:' :
-				                                                         index === 1 ? '事業宮:' :
-				                                                         index === 2 ? '財帛宮:' : '遷移宮:';
-				                                        return `<div class="palace-row">${analyzePalaceStars(palace.stars, palaceType)}</div>`;
+				                                        const palaceType = index === 0 ? '命宮' :
+				                                                         index === 1 ? '事業宮' :
+				                                                         index === 2 ? '財帛宮' : '遷移宮';
+				                                        return `
+				                                                <div class="palace-stars-analysis">
+				                                                    ${analyzePalaceStars(palace.stars, palaceType)}
+				                                                </div>
+				                                        `;
 				                                    }).join('')}
-				                                </div>
-				                            </div>
 				                        `;
 				            // 更新三方四正分析容器
 				            const sanfangContainer = document.getElementById('geju-analysis');
