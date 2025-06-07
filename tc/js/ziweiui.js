@@ -837,11 +837,19 @@ fetchStarAnalysis: async function(palace, star, elementId) {
 			}
 				
 			// 更新命盤中心的基本資訊
+			// 更新中央基本資訊
 			document.getElementById('solarDate').textContent = ziwei.getSolarDay();
 			document.getElementById('lunarDate').textContent = ziwei.getLunarDay();
 			document.getElementById('zodiac').textContent = ziwei.getShengXiao();
 			document.getElementById('fiveElement').textContent = ziwei.getFiveElement();
 			document.getElementById('genderType').textContent = ziwei.getYinYangGender();
+
+			// 更新標題下方基本資訊
+			document.getElementById('solar-info').textContent = ziwei.getSolarDay();
+			document.getElementById('lunar-info').textContent = ziwei.getLunarDay();
+			document.getElementById('zodiac-info').textContent = ziwei.getShengXiao();
+			document.getElementById('fiveElement-info').textContent = ziwei.getFiveElement();
+			document.getElementById('genderType-info').textContent = ziwei.getYinYangGender();
 
 			let htmlContent = '';
 			// 添加四化星分析區域

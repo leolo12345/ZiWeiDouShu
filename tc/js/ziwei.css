@@ -48,6 +48,18 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.zwDivHeader .basic-info {
+    width: 100%;
+    margin: 10px auto;
+    padding: 10px;
+    line-height: 1.6;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
+    color: #0f172a;
+}
+
 .zwDivHeader select,
 .zwDivHeader input {
     margin: 0 5px;
