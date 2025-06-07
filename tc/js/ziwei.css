@@ -14,42 +14,71 @@ body {
     -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
-}
-.ziwei{ display: grid;border:4px darkgray groove; padding:1px; height:90%;
-	grid-template-columns: repeat(4,25%);
-	grid-template-rows: repeat(4,25%);}
-.ziwei,.zwDivHeader{ width:100%; }
-@media only screen and (max-width:1024px){
-.ziwei,.zwDivHeader{ width:100%; } body{padding-bottom: 20px;}}
-.zwDivCenter{ grid-column-start: 2; grid-column-end: 4; grid-row-start: 2; grid-row-end: 4; }
-.ziwei>div {
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    margin: 2px;
-    position: relative;
-    font-size: 1em;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
-    transition: all 0.3s ease;
+    width: 70%;
+    margin: 0 auto;
 }
 
-.ziwei>div:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+.zwDivHeader {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
-.zwDivHeader,.zwDivHeader h2{ margin:10px 0; position:relative;}
-.zwDivHeader>div{top:0;right:0;}
-.zwDivHeader div {
-    margin-bottom:5px;
-    padding:5px;
+
+.zwDivHeader h2 {
+    width: 100%;
+    text-align: center;
+    margin: 10px 0;
+    font-size: 1.5em;
+    color: #0f172a;
+}
+
+.zwDivHeader > div {
+    width: 100%;
+    margin: 10px auto;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
     background-color: rgba(255, 255, 255, 0.9);
     border-radius: 5px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-.zwDivHeader input[type=button],select,input[type=radio]:first-of-type{margin-left:15px;}
-.zwDivCenter{
-    position:relative;
-    border:1px solid rgba(255, 255, 255, 0.2);
+
+.zwDivHeader select,
+.zwDivHeader input {
+    margin: 0 5px;
+    text-align: center;
+}
+
+.ziwei {
+    display: grid;
+    border: 4px darkgray groove;
+    padding: 1px;
+    height: 90%;
+    grid-template-columns: repeat(4, 25%);
+    grid-template-rows: repeat(4, 25%);
+}
+
+@media only screen and (max-width:1024px) {
+    .ziwei, .zwDivHeader {
+        width: 70%;
+    }
+    body {
+        padding-bottom: 20px;
+    }
+}
+
+.zwDivCenter {
+    grid-column-start: 2;
+    grid-column-end: 4;
+    grid-row-start: 2;
+    grid-row-end: 4;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     margin: 15px auto;
     padding: 20px;
     width: 100%;
@@ -61,195 +90,247 @@ body {
     justify-content: center;
     align-items: center;
 }
-.zwDivCenter div{
+
+.ziwei > div {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    margin: 2px;
+    position: relative;
+    font-size: 1em;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
+    transition: all 0.3s ease;
+}
+
+.ziwei > div:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.zwDivCenter div {
     text-align: center;
     margin: 10px;
     line-height: 1.8;
     font-size: 1.2em;
 }
+
 #basicInfo {
     padding: 20px;
     background: rgba(255, 255, 255, 0.9);
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
 }
+
 #basicInfo span {
     color: #0ea5e9;
     font-weight: 600;
     margin-left: 8px;
 }
-.zwDivCenter .zwcopy{bottom:0;right:0;font-size:1em;font-weight: normal;}
-.StarA,.StarB,.StarC,.MangA,.MangB,.MangC,.MangY10,.MangY1,.zwcopy,.zwDivHeader>div{position:absolute;}
-.starDiv{border:0px solid blue;margin:5px;}
-.StarA{
-    top:0;
+
+.zwDivCenter .zwcopy {
+    bottom: 0;
+    right: 0;
+    font-size: 1em;
+    font-weight: normal;
+}
+
+.StarA, .StarB, .StarC, .MangA, .MangB, .MangC, .MangY10, .MangY1, .zwcopy {
+    position: absolute;
+}
+
+.starDiv {
+    border: 0px solid blue;
+    margin: 5px;
+}
+
+.StarA {
+    top: 0;
     color: #0ea5e9;
     font-size: 1.2em;
     font-weight: 600;
     text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.9),
-                 -1px -1px 0 rgba(255, 255, 255, 0.9);
+                -1px -1px 0 rgba(255, 255, 255, 0.9);
 }
-.StarA span{
+
+.StarA span {
     color: #db2777;
     text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.9),
-                 -1px -1px 0 rgba(255, 255, 255, 0.9);
+                -1px -1px 0 rgba(255, 255, 255, 0.9);
 }
+
 .Star4 {
-    margin-top:8px;
+    margin-top: 8px;
     font-size: 1.1em;
 }
-.Star4 span{
+
+.Star4 span {
     color: #6d28d9;
     font-weight: 500;
     text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.9),
-                 -1px -1px 0 rgba(255, 255, 255, 0.9);
+                -1px -1px 0 rgba(255, 255, 255, 0.9);
 }
-.StarB{
+
+.StarB {
     color: #dc2626;
     font-size: 1.2em;
     font-weight: 600;
-    top:0;
+    top: 0;
     text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.9),
-                 -1px -1px 0 rgba(255, 255, 255, 0.9);
+                -1px -1px 0 rgba(255, 255, 255, 0.9);
 }
-.StarC{
+
+.StarC {
     text-align: right;
-    top:75px;
-    right:0;
-    width:100%;
+    top: 75px;
+    right: 0;
+    width: 100%;
     color: #e0e0e0;
     text-shadow: 0 0 5px rgba(224, 224, 224, 0.5);
 }
-.StarA,.StarC{text-align: right;}
-.StarAll{display:none;}
-.StemBranch{
-    width:100%;
-    color:#4caf50;
-    font-weight:bold;
+
+.StarA, .StarC {
+    text-align: right;
+}
+
+.StarAll {
+    display: none;
+}
+
+.StemBranch {
+    width: 100%;
+    color: #4caf50;
+    font-weight: bold;
     text-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
 }
-.MangB{width:100%;font-weight:bold;}
-.MangC{color:blue;}
-.MangA,.StemBranch,.MangB,.MangC{bottom:0;}
-.MangY10,.MangY1{width:100%; height:1.5em;font-size:0.8em;}
-.MangY10,.MangY1,.StemBranch,.MangB{text-align: center;}
-.MangY10{
-    bottom:3.2em;
-    color:#e040fb;
+
+.MangB {
+    width: 100%;
+    font-weight: bold;
+}
+
+.MangC {
+    color: blue;
+}
+
+.MangA, .StemBranch, .MangB, .MangC {
+    bottom: 0;
+}
+
+.MangY10, .MangY1 {
+    width: 100%;
+    height: 1.5em;
+    font-size: 0.8em;
+}
+
+.MangY10, .MangY1, .StemBranch, .MangB {
+    text-align: center;
+}
+
+.MangY10 {
+    bottom: 3.2em;
+    color: #e040fb;
     text-shadow: 0 0 5px rgba(224, 64, 251, 0.5);
 }
-.MangY1{
-    bottom:1.8em;
-    color:#40c4ff;
+
+.MangY1 {
+    bottom: 1.8em;
+    color: #40c4ff;
     text-shadow: 0 0 5px rgba(64, 196, 255, 0.5);
 }
-.zwStarRight,.MangC{right:0;}
-.zwStarLeft,.MangA{left:0;}
+
+.zwStarRight, .MangC {
+    right: 0;
+}
+
+.zwStarLeft, .MangA {
+    left: 0;
+}
 
 /* 星曜表格樣式 */
 .ziwei-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px auto;
-  font-size: 1.1em;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  overflow: hidden;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 70%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    text-align: center;
+    font-size: 1.1em;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #ddd;
 }
 
 .ziwei-table th,
 .ziwei-table td {
-  padding: 12px 15px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #e0e0e0;
-  font-weight: 500;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+    text-align: center;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    color: #333;
+    font-weight: 500;
 }
 
 .ziwei-table tr:hover td {
-  background-color: rgba(14, 165, 233, 0.1);
-  transition: all 0.3s ease;
-}
-
-.ziwei-table th,
-.ziwei-table td {
-  padding: 12px 15px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #e0e0e0;
+    background-color: rgba(14, 165, 233, 0.1);
+    transition: all 0.3s ease;
 }
 
 .ziwei-table thead tr {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-}
-
-.ziwei-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.05);
-  transition: all 0.3s ease;
-}
-
-.ziwei-table thead tr {
-  background-color: #009879;
-  color: #ffffff;
-  text-align: center;
-  font-weight: bold;
-}
-
-.ziwei-table th,
-.ziwei-table td {
-  padding: 12px 15px;
-  border: 1px solid #dddddd;
+    background-color: #0ee945;
+    color: #ffffff;
+    text-align: center !important;
+    font-weight: bold;
 }
 
 .ziwei-table tbody tr {
-  border-bottom: 1px solid #dddddd;
-  text-align: center;
+    border-bottom: 1px solid #dddddd;
+    text-align: center !important;
 }
 
 .ziwei-table tbody tr:nth-of-type(even) {
-  background-color: #f3f3f3;
+    background-color: #ffffff;
+}
+
+.ziwei-table tbody tr:nth-of-type(odd) {
+    background-color: rgba(14, 165, 233, 0.1);
 }
 
 .ziwei-table tbody tr:last-of-type {
-  border-bottom: 2px solid #009879;
+    border-bottom: 2px solid #0e6de9;
 }
 
 .ziwei-table tbody tr:hover {
-  background-color: #f1f1f1;
+    background-color: rgba(14, 165, 233, 0.2);
+    transition: background-color 0.3s ease;
 }
 
 /* 星曜分析容器樣式 */
 .star-analysis-container {
-  width: 100%;
-  margin: 15px auto;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #e0e0e0;
+    width: 70%;
+    margin: 15px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e0e0e0;
 }
 
 /* 分析表格樣式 */
 #analysis tr {
-  margin-bottom: 3px;
-  display: block;
+    margin-bottom: 3px;
+    display: block;
 }
 
 #analysis td {
-  padding: 3px 0;
-  line-height: 1.4;
+    padding: 3px 0;
+    line-height: 1.4;
 }
 
 /* 聊天信息樣式 */
 .chat-info {
-    width: 100%;
+    width: 70%;
     max-width: 800px;
     margin: 15px auto;
     padding: 15px;
@@ -296,40 +377,40 @@ body {
 }
 
 #analysis tr + tr {
-  margin-top: 3px;
+    margin-top: 3px;
 }
 
 .star-analysis-section {
-  width: 100%;
-  margin: 15px auto;
-  padding: 15px;
-  background-color: #f8f8f8;
-  border-left: 4px solid #009879;
+    width: 100%;
+    margin: 15px auto;
+    padding: 15px;
+    background-color: #f8f8f8;
+    border-left: 4px solid #009879;
 }
 
 #mingfu-analysis {
-  margin-top: 3px;
-  padding-top: 3px;
+    margin-top: 3px;
+    padding-top: 3px;
 }
 
 .star-analysis-section h3 {
-  color: #009879;
-  margin-top: 0;
-  margin-bottom: 10px;
-  font-size: 1.1em;
+    color: #009879;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.1em;
 }
 
 .star-analysis-content {
-  line-height: 1.6;
-  color: #333;
+    line-height: 1.6;
+    color: #333;
 }
 
 .star-analysis-warning {
-  padding: 10px;
-  background-color: #fff3cd;
-  border-left: 4px solid #ffc107;
-  color: #856404;
-  margin-bottom: 15px;
+    padding: 10px;
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    color: #856404;
+    margin-bottom: 15px;
 }
 
 /* 三方四正分析樣式 */
