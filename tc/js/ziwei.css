@@ -331,7 +331,7 @@ body {
 /* 聊天信息樣式 */
 .chat-info {
     width: 70%;
-    max-width: 800px;
+    /* max-width: 800px; */
     margin: 15px auto;
     padding: 15px;
     background: rgba(255, 255, 255, 0.95);
@@ -381,7 +381,7 @@ body {
 }
 
 .star-analysis-section {
-    width: 100%;
+    width: 90%;
     margin: 15px auto;
     padding: 15px;
     background-color: #f8f8f8;
