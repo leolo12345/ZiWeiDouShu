@@ -298,7 +298,7 @@ var ziweiUI = {
 
                 const sanfangSizhengHTML = await Promise.all(sizhengResults.map(async (palace, index) => {
                     const palaceType = index === 0 ? '命宮' :
-                                     index === 1 ? '事業宮' :
+                                     index === 1 ? '官祿宮' :
                                      index === 2 ? '財帛宮' : '遷移宮';
                     return `
                         <div class="palace-stars-analysis">
