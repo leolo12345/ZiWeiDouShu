@@ -148,8 +148,8 @@ var ziweiUI = {
             if (!normalizedPalace || !star) {
                 throw new Error('缺少必要參數: palace或star');
             }
-
-            const apiUrl = `http://localhost:3001/api/star-analysis?palace=${encodeURIComponent(normalizedPalace)}&star=${encodeURIComponent(star)}`;
+            
+            const apiUrl = `http://localhost:3001/api/star-analysis?palace=${encodeURIComponent(normalizedPalace)}&star=${encodeURIComponent(star+"星")}`;
             
             const response = await fetch(apiUrl, {
                 headers: {
@@ -163,6 +163,7 @@ var ziweiUI = {
             }
 
             const data = await response.json();
+            console.log(`獲取${star}在${palace}的分析結果:`, data); 
             return data.analysis || '無分析內容';
         } catch (error) {
             console.error(`獲取${star}在${palace}的分析失敗:`, error);
@@ -241,15 +242,20 @@ var ziweiUI = {
 
             // 獲取命宮位置
             const mingPalace = zw.findIndex(palace => palace.MangB.includes("命宮"));
+            console.log('命宮位置:', mingPalace); 
             if (mingPalace !== -1) {
                 const mingStars = zw[mingPalace].StarA
                     .filter(star => !star.startsWith("化"))
                     .map(star => star.replace(/<[^>]*>/g, "").substring(0, 2));
                 
-                const mingAnalysisResults = await Promise.all(mingStars.map(star => 
-                    this.fetchStarAnalysis("命宮", star)
-                ));
-                analysisResults.push(...mingAnalysisResults.filter(Boolean));
+                // 分別處理每顆星的分析
+                for (const star of mingStars) {
+                    const result = await this.fetchStarAnalysis("命宮", star);
+                    if (result) {
+                        analysisResults.push({palace: "命宮", star, analysis: result});
+                    }
+                }
+                console.log('命宮分析結果:', analysisResults);
             }
 
             // 獲取福德宮位置
@@ -259,10 +265,13 @@ var ziweiUI = {
                     .filter(star => !star.startsWith("化"))
                     .map(star => star.replace(/<[^>]*>/g, "").substring(0, 2));
                 
-                const fudeAnalysisResults = await Promise.all(fudeStars.map(star => 
-                    this.fetchStarAnalysis("福德宮", star)
-                ));
-                analysisResults.push(...fudeAnalysisResults.filter(Boolean));
+                // 分別處理每顆星的分析
+                for (const star of fudeStars) {
+                    const result = await this.fetchStarAnalysis("福德宮", star);
+                    if (result) {
+                        analysisResults.push({palace: "福德宮", star, analysis: result});
+                    }
+                }
             }
 
             // 獲取命宮三方四正分析
@@ -317,26 +326,24 @@ var ziweiUI = {
             const analysisContainer = document.getElementById('mingfu-analysis');
             if (analysisContainer) {
                 let htmlContent = '';
-                
+                                         
                 if (analysisResults.length > 0) {
-                    htmlContent = analysisResults.map(text => {
-                        if (typeof text === 'string') {
-                            const palaceMatch = text.match(/(.*宮) (.*星)/);
-                            if (palaceMatch) {
-                                const palace = palaceMatch[1];
-                                const star = palaceMatch[2];
-                                const analysis = text.substring(text.indexOf(':') + 1).trim();
-                                return `
-                                    <div class="star-analysis-section">
-                                        <h3>${palace}基本分析</h3>
-                                        <div class="star-analysis-content">${star}: ${analysis}</div>
-                                    </div>
-                                `;
-                            }
-                            return `<div class="star-analysis-item">${text}</div>`;
+                    // 按宮位分組分析結果
+                    const groupedAnalysis = analysisResults.reduce((acc, curr) => {
+                        if (!acc[curr.palace]) {
+                            acc[curr.palace] = [];
                         }
-                        return '';
-                    }).join('');
+                        acc[curr.palace].push(`${curr.star}: ${curr.analysis}`);
+                        return acc;
+                    }, {});
+
+                    // 生成HTML內容
+                    htmlContent = Object.entries(groupedAnalysis).map(([palace, analyses]) => `
+                        <div class="star-analysis-section">
+                            <h3>${palace}基本分析</h3>
+                            ${analyses.map(analysis => `<div class="star-analysis-content">${analysis}</div>`).join('')}
+                        </div>
+                    `).join('');
                 } else {
                     htmlContent = `
                         <div class="star-analysis-section">

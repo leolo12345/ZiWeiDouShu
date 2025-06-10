@@ -14,11 +14,11 @@ body {
     -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
-    width: 70%;
     margin: 0 auto;
 }
 
 .zwDivHeader {
+    width: 70%;
     padding: 15px;
     display: flex;
     flex-direction: column;
@@ -70,9 +70,14 @@ body {
     display: grid;
     border: 4px darkgray groove;
     padding: 1px;
-    height: 90%;
-    grid-template-columns: repeat(4, 25%);
-    grid-template-rows: repeat(4, 25%);
+    width: 90vh;
+    height: 90vh;
+    min-width: 800px;
+    min-height: 800px;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 10px;
+    margin: 0 auto;
 }
 
 @media only screen and (max-width:1024px) {
@@ -196,8 +201,9 @@ body {
     top: 75px;
     right: 0;
     width: 100%;
-    color: #e0e0e0;
-    text-shadow: 0 0 5px rgba(224, 224, 224, 0.5);
+    color: #333333;
+    font-weight: 500;
+    text-shadow: none;
 }
 
 .StarA, .StarC {
@@ -326,7 +332,7 @@ body {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #e0e0e0;
+    color: #333333;
 }
 
 /* 分析表格樣式 */
@@ -343,7 +349,6 @@ body {
 /* 聊天信息樣式 */
 .chat-info {
     width: 70%;
-    /* max-width: 800px; */
     margin: 15px auto;
     padding: 15px;
     background: rgba(255, 255, 255, 0.95);

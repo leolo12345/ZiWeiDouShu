@@ -13,20 +13,15 @@ app.use('/tc', express.static(path.join(__dirname, '../tc')));
 // 數據庫路徑 (相對于server目錄)
 const dbPath = path.join(__dirname, '../tc/DB/ziwei.db');
 
-// API端點：獲取星曜分析
-// 添加根目錄重定向
+// 根目錄重定向
 app.get('/', (req, res) => {
-  console.group(`[API][${new Date().toISOString()}] 根目錄重定向`);
-  console.log('請求來源:', req.headers['user-agent']);
   res.redirect('/tc/index.html');
-  console.groupEnd();
 });
 
 // 統一日誌中間件
 app.use((req, res, next) => {
   console.groupCollapsed(`[API][${new Date().toISOString()}] ${req.method} ${req.path}`);
   console.log('請求參數:', req.query);
-  console.log('請求頭:', req.headers);
   const startTime = Date.now();
   
   res.on('finish', () => {
@@ -38,28 +33,39 @@ app.use((req, res, next) => {
   next();
 });
 
+// 新增三方四正分析API
+app.get('/api/sanfang-sizheng-analysis', (req, res) => {
+  const { palaceId } = req.query;
+
+  if (!palaceId) {
+    return res.status(400).json({ error: '缺少 palaceId 參數' });
+  }
+
+  const db = new sqlite3.Database(dbPath);
+  const sql = `SELECT * FROM sanfang_sizheng_analysis WHERE palace_id = ?`;
+
+  db.all(sql, [palaceId], (err, rows) => {
+    if (err) {
+      console.error('[DB][ERROR] 三方四正分析查詢錯誤:', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+
+    res.json({
+      analysis: rows,
+      error: null
+    });
+    db.close();
+  });
+});
+
 // 基本數據API
 app.get('/api/heavenly-stems', (req, res) => {
-  try {
-    console.log('[DB] 查詢天干數據');
-    const db = new sqlite3.Database(dbPath);
-    db.all('SELECT name FROM heavenly_stems', [], (err, rows) => {
-      if (err) {
-        console.error('[DB][ERROR] 天干查詢錯誤:', err.message);
-        return res.status(500).json({ error: err.message });
-      }
-      console.log('[DB] 查詢到天干數據:', rows.length, '條');
-      res.json(rows);
-      db.close();
-    });
-  } catch (e) {
-    console.error('[API][ERROR] 處理天干請求異常:', {
-      message: e.message,
-      stack: e.stack,
-      timestamp: new Date().toISOString()
-    });
-    res.status(500).json({ error: '伺服器內部錯誤' });
-  }
+  const db = new sqlite3.Database(dbPath);
+  db.all('SELECT name FROM heavenly_stems', [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+    db.close();
+  });
 });
 
 app.get('/api/earthly-branches', (req, res) => {
@@ -71,275 +77,56 @@ app.get('/api/earthly-branches', (req, res) => {
   });
 });
 
-app.get('/api/yin-yang', (req, res) => {
-  const db = new sqlite3.Database(dbPath);
-  db.all('SELECT name FROM yin_yang', [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-    db.close();
-  });
-});
-
-app.get('/api/zodiac-signs', (req, res) => {
-  const db = new sqlite3.Database(dbPath);
-  db.all('SELECT name FROM zodiac_signs', [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-    db.close();
-  });
-});
-
-app.get('/api/palaces', (req, res) => {
-  const db = new sqlite3.Database(dbPath);
-  db.all('SELECT * FROM palaces', [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-    db.close();
-  });
-});
-
-app.get('/api/five-elements', (req, res) => {
-  const db = new sqlite3.Database(dbPath);
-  db.all('SELECT * FROM five_elements', [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-    db.close();
-  });
-});
-
-// 星曜數據API
-app.get('/api/main-stars', (req, res) => {
-  const db = new sqlite3.Database(dbPath);
-  db.all('SELECT name FROM main_stars', [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-    db.close();
-  });
-});
-
-app.get('/api/auxiliary-stars', (req, res) => {
-  const db = new sqlite3.Database(dbPath);
-  db.all('SELECT name FROM auxiliary_stars', [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-    db.close();
-  });
-});
-
-app.get('/api/transformation-stars', (req, res) => {
-  const db = new sqlite3.Database(dbPath);
-  db.all('SELECT name FROM transformation_stars', [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-    db.close();
-  });
-});
-
-app.get('/api/evil-stars', (req, res) => {
-  const db = new sqlite3.Database(dbPath);
-  db.all('SELECT name FROM evil_stars', [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-    db.close();
-  });
-});
-
-app.get('/api/other-stars', (req, res) => {
-  const db = new sqlite3.Database(dbPath);
-  db.all('SELECT name FROM other_stars', [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-    db.close();
-  });
-});
-
-// 星曜位置數據API
-app.get('/api/star-a14-positions', (req, res) => {
-  const db = new sqlite3.Database(dbPath);
-  db.all('SELECT * FROM star_a14_positions', [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-    db.close();
-  });
-});
-
-app.get('/api/star-z06-positions', (req, res) => {
-  const db = new sqlite3.Database(dbPath);
-  db.all('SELECT * FROM star_z06_positions', [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-    db.close();
-  });
-});
-
-app.get('/api/star-t08-positions', (req, res) => {
-  const db = new sqlite3.Database(dbPath);
-  db.all('SELECT * FROM star_t08_positions', [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-    db.close();
-  });
-});
-
-app.get('/api/star-g07-positions', (req, res) => {
-  const db = new sqlite3.Database(dbPath);
-  db.all('SELECT * FROM star_g07_positions', [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-    db.close();
-  });
-});
-
-app.get('/api/star-b06-positions', (req, res) => {
-  const db = new sqlite3.Database(dbPath);
-  db.all('SELECT * FROM star_b06_positions', [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-    db.close();
-  });
-});
-
-app.get('/api/star-os5-positions', (req, res) => {
-  const db = new sqlite3.Database(dbPath);
-  db.all('SELECT * FROM star_os5_positions', [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-    db.close();
-  });
-});
-
 // 星曜分析API
 app.get('/api/star-analysis', (req, res) => {
-  try {
-    const { palace, star } = req.query;
-    console.log('[API] 星曜分析請求參數:', { palace, star });
-    
-    if (!palace || !star) {
-      console.warn('[API][WARN] 缺少必要參數');
-      return res.status(400).json({ error: '缺少palace或star參數', analysis: '' });
+  const { palace, star } = req.query;
+
+  if (!palace || !star) {
+    return res.status(400).json({ error: '缺少palace或star參數', analysis: '' });
+  }
+  //star=star+'星'; 
+  const db = new sqlite3.Database(dbPath);
+  
+  const sql = `SELECT analysis FROM star_analysis WHERE palace = ? AND star = ?`;
+
+  db.get(sql, [palace, star], (err, row) => {
+    if (err) {
+      return res.status(500).json({ error: err.message, analysis: '' });
     }
 
-    const db = new sqlite3.Database(dbPath);
-    const sql = `SELECT analysis FROM star_analysis WHERE palace = ? AND star = ?`;
-    
-    console.log('[DB] 執行查詢:', sql, [palace, star]);
-    const queryStart = Date.now();
-    
-    db.get(sql, [palace, star], (err, row) => {
-      console.log('[DB] 查詢耗時:', Date.now() - queryStart, 'ms');
-      
-      if (err) {
-        console.error('[DB][ERROR] 查詢錯誤:', {
-          message: err.message,
-          stack: err.stack,
-          timestamp: new Date().toISOString()
-        });
-        return res.status(500).json({ error: err.message, analysis: '' });
-      }
-      
-      console.log('[DB] 查詢結果:', row ? '找到記錄' : '無匹配記錄');
-      res.json({
-        analysis: row ? row.analysis : '找不到對應分析',
-        error: null
-      });
-      db.close();
+    res.json({
+      analysis: row ? row.analysis : '找不到對應分析',
+      error: null
     });
-  } catch (e) {
-    console.error('[API][ERROR] 星曜分析處理異常:', {
-      message: e.message,
-      stack: e.stack,
-      timestamp: new Date().toISOString()
-    });
-    res.status(500).json({ error: '伺服器內部錯誤', analysis: '' });
-  }
+    db.close();
+  });
 });
 
-// 獲取所有四化星分析
-app.get('/api/sihua-analysis-all', (req, res) => {
-  try {
-    console.log('[API] 獲取所有四化星分析');
-
-    const db = new sqlite3.Database(dbPath);
-    const sql = `SELECT * FROM transformation_star_analysis`;
-    
-    console.log('[DB] 執行查詢:', sql);
-    const queryStart = Date.now();
-    
-    db.all(sql, [], (err, rows) => {
-      console.log('[DB] 查詢耗時:', Date.now() - queryStart, 'ms');
-      
-      if (err) {
-        console.error('[DB][ERROR] 查詢錯誤:', {
-          message: err.message,
-          stack: err.stack,
-          timestamp: new Date().toISOString()
-        });
-        return res.status(500).json({ error: err.message, analyses: [] });
-      }
-      
-      console.log('[DB] 查詢結果:', rows ? `找到${rows.length}條記錄` : '無記錄');
-      res.json({
-        analyses: rows || [],
-        error: null
-      });
-      db.close();
-    });
-  } catch (e) {
-    console.error('[API][ERROR] 四化星分析處理異常:', {
-      message: e.message,
-      stack: e.stack,
-      timestamp: new Date().toISOString()
-    });
-    res.status(500).json({ error: '伺服器內部錯誤', analyses: [] });
-  }
-});
-
-// 獲取單個四化星分析
+// 四化星分析API
 app.get('/api/sihua-analysis', (req, res) => {
-  try {
-    const { star, transformation_type } = req.query;
-    console.log('[API] 四化星分析請求參數:', { star, transformation_type });
-    
-    if (!star || !transformation_type) {
-      console.warn('[API][WARN] 缺少必要參數');
-      return res.status(400).json({ error: '缺少star或transformation_type參數', analysis: '' });
+  const { star, transformation_type } = req.query;
+
+  if (!star || !transformation_type) {
+    return res.status(400).json({ error: '缺少star或transformation_type參數', analysis: '' });
+  }
+
+  const db = new sqlite3.Database(dbPath);
+  const sql = `SELECT analysis FROM transformation_star_analysis WHERE star = ? AND transformation_type = ?`;
+
+  db.get(sql, [star, transformation_type], (err, row) => {
+    if (err) {
+      return res.status(500).json({ error: err.message, analysis: '' });
     }
 
-    const db = new sqlite3.Database(dbPath);
-    const sql = `SELECT analysis FROM transformation_star_analysis WHERE star = ? AND transformation_type = ?`;
-    
-    console.log('[DB] 執行查詢:', sql, [star, transformation_type]);
-    const queryStart = Date.now();
-    
-    db.get(sql, [star, transformation_type], (err, row) => {
-      console.log('[DB] 查詢耗時:', Date.now() - queryStart, 'ms');
-      
-      if (err) {
-        console.error('[DB][ERROR] 查詢錯誤:', {
-          message: err.message,
-          stack: err.stack,
-          timestamp: new Date().toISOString()
-        });
-        return res.status(500).json({ error: err.message, analysis: '' });
-      }
-      
-      console.log('[DB] 查詢結果:', row ? '找到記錄' : '無匹配記錄');
-      res.json({
-        analysis: row ? row.analysis : '找不到對應分析',
-        error: null
-      });
-      db.close();
+    res.json({
+      analysis: row ? row.analysis : '找不到對應分析',
+      error: null
     });
-  } catch (e) {
-    console.error('[API][ERROR] 四化星分析處理異常:', {
-      message: e.message,
-      stack: e.stack,
-      timestamp: new Date().toISOString()
-    });
-    res.status(500).json({ error: '伺服器內部錯誤', analysis: '' });
-  }
+    db.close();
+  });
 });
 
+// 啟動伺服器
 app.listen(PORT, () => {
   console.log(`服務器運行中: http://localhost:${PORT}`);
 });

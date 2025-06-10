@@ -221,3 +221,7 @@ INSERT OR IGNORE INTO star_analysis (palace, star, analysis) VALUES
 CREATE INDEX idx_star_analysis_palace ON star_analysis(palace);
 CREATE INDEX idx_star_analysis_star ON star_analysis(star);
 CREATE INDEX idx_star_analysis_combo ON star_analysis(palace, star);
+-- 更新所有星曜名稱後面加上「星」字
+UPDATE star_analysis
+SET star = star || '星'
+WHERE star NOT LIKE '%星';
