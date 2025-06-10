@@ -279,7 +279,7 @@ var ziweiUI = {
                 try {
                     // 獲取三方四正宮位索引
                     const sizhengPalaces = getSizhengPalaces(mingPalace);
-                    const palaceNames = ["命宮", "事業宮", "財帛宮", "遷移宮"];
+                    const palaceNames = ["命宮", "官祿宮", "財帛宮", "遷移宮"];
                     
                     // 清空分析容器
                     const sanfangContainer = document.getElementById('geju-analysis');
@@ -318,22 +318,16 @@ var ziweiUI = {
                                 
                                 // 處理API返回的分析結果
                                 let analysisText = '';
-                                if (data.analysis && Array.isArray(data.analysis)) {
-                                    analysisText = data.analysis.map(item => {
-                                        if (typeof item === 'object') {
-                                            return Object.entries(item).map(([key, value]) => `<div class="star-item"><strong>${key}:</strong> ${value}</div>`).join('');
-                                        }
-                                        return `<div class="star-item">${item}</div>`;
-                                    }).join('');
-                                } else if (typeof data.analysis === 'string') {
-                                    analysisText = data.analysis;
-                                } else if (data.analysis) {
-                                    analysisText = JSON.stringify(data.analysis, null, 2);
+                                if (typeof data.analysis === 'object' && data.analysis[0].analysis_1 ) {
+                                    analysisText = [data.analysis[0].analysis_1, data.analysis[0].analysis_2, data.analysis[0].analysis_3].join(', ');
                                 } else {
-                                    analysisText = '暫無分析數據';
+                                    analysisText = data.analysis;
                                 }
-                                
-                                palaceAnalysis.push(analysisText);
+                                palaceAnalysis.push(`${star} - ${analysisText}`);
+
+                                // if (data.analysis) {
+                                //     palaceAnalysis.push(`${star} - ${data.analysis}`);
+                                // }
                             } catch (error) {
                                 console.error(`${palaceName} ${star} 三方四正分析處理失敗:`, error);
                             }
@@ -345,7 +339,7 @@ var ziweiUI = {
                                 <div class="palace-stars-analysis">
                                     <div class="star-analysis-section">
                                         <h3>${palaceName}分析</h3>
-                                        <div class="star-analysis-content">${palaceAnalysis.join('')}</div>
+                                        <div class="star-analysis-content">${palaceAnalysis.join('<br>')}</div>
                                     </div>
                                 </div>
                             `;
@@ -376,14 +370,14 @@ var ziweiUI = {
                         if (!acc[curr.palace]) {
                             acc[curr.palace] = [];
                         }
-                        acc[curr.palace].push(`${curr.star}: ${curr.analysis}`);
+                        acc[curr.palace].push(`${curr.star} - ${curr.analysis}`);
                         return acc;
                     }, {});
 
-                    // 生成HTML內容
+                    // 生成HTML內容                    
                     htmlContent = Object.entries(groupedAnalysis).map(([palace, analyses]) => `
                         <div class="star-analysis-section">
-                            <h3>${palace}基本分析</h3>
+                            <h3>${palace}基本分析2</h3>
                             ${analyses.map(analysis => `<div class="star-analysis-content">${analysis}</div>`).join('')}
                         </div>
                     `).join('');
@@ -426,7 +420,7 @@ var ziweiUI = {
                         const sihuaHTML = sihuaResults.map(({type, star, analysis}) => `
                             <div class="star-analysis-section">
                                 <h3>${type}分析</h3>
-                                <div class="star-analysis-content">${star}: ${analysis}</div>
+                                <div class="star-analysis-content">${star} - ${analysis}</div>
                             </div>
                         `).join('');
                         sihuaContainer.innerHTML = sihuaHTML;
