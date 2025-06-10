@@ -35,16 +35,16 @@ app.use((req, res, next) => {
 
 // 新增三方四正分析API
 app.get('/api/sanfang-sizheng-analysis', (req, res) => {
-  const { palaceId } = req.query;
+  const { palace, star } = req.query;
 
-  if (!palaceId) {
-    return res.status(400).json({ error: '缺少 palaceId 參數' });
+  if (!palace || !star) {
+    return res.status(400).json({ error: '缺少 palace 或 star 參數' });
   }
 
   const db = new sqlite3.Database(dbPath);
-  const sql = `SELECT * FROM sanfang_sizheng_analysis WHERE palace_id = ?`;
+  const sql = `SELECT analysis_1, analysis_2, analysis_3 FROM palace_star_analysis WHERE palace = ? AND star = ?`;
 
-  db.all(sql, [palaceId], (err, rows) => {
+  db.all(sql, [palace, star], (err, rows) => {
     if (err) {
       console.error('[DB][ERROR] 三方四正分析查詢錯誤:', err.message);
       return res.status(500).json({ error: err.message });

@@ -127,7 +127,7 @@ var ziweiUI = {
             if (!response.ok) {
                 throw new Error(`四化星分析API請求失敗: ${response.status} ${response.statusText}`);
             }
-            
+
             const data = await response.json();
             const result = data.analysis || '無分析內容';
             console.log('處理後的分析結果:', result);
@@ -276,49 +276,92 @@ var ziweiUI = {
 
             // 獲取命宮三方四正分析
             if (mingPalace !== -1) {
-                const sanfangIndices = getSanfangPalaces(mingPalace);
-                const sizhengIndices = getSizhengPalaces(mingPalace);
-
-                const analyzePalaceStars = async (stars, palaceType) => {
-                    try {
-                        const analyses = await Promise.all(stars.map(async star => {
-                            const analysis = await this.fetchStarAnalysis(palaceType, star);
-                            return analysis ? `[${star}]: ${analysis}` : `[${star}]: 暫無分析數據`;
-                        }));
-                        return `<div class="star-analysis-section"><h3>${palaceType}分析</h3>${analyses.join(' ')}</div>`;
-                    } catch (error) {
-                        console.error('分析處理失敗:', error);
-                        return `<div class="star-analysis-section"><h3>${palaceType}分析</h3>分析載入失敗</div>`;
-                    }
-                };
-
-                const sizhengResults = sizhengIndices.map(index => {
-                    const palace = zw[index];
-                    const stars = palace.StarA
-                        .filter(star => !star.startsWith("化"))
-                        .map(star => star.replace(/<[^>]*>/g, "").substring(0, 2));
+                try {
+                    // 獲取三方四正宮位索引
+                    const sizhengPalaces = getSizhengPalaces(mingPalace);
+                    const palaceNames = ["命宮", "事業宮", "財帛宮", "遷移宮"];
                     
-                    return {
-                        index: index,
-                        name: palace.MangB,
-                        stars: stars
-                    };
-                });
+                    // 清空分析容器
+                    const sanfangContainer = document.getElementById('geju-analysis');
+                    if (sanfangContainer) {
+                        sanfangContainer.innerHTML = '';
+                    }
+                    
+                    // 為每個宮位獲取主星並調用API
+                    for (let i = 0; i < sizhengPalaces.length; i++) {
+                        const palaceIndex = sizhengPalaces[i];
+                        const palaceName = palaceNames[i];
+                        
+                        // 獲取該宮位主星列表
+                        const stars = zw[palaceIndex].StarA
+                            .filter(star => !star.startsWith("化"))
+                            .map(star => star.replace(/<[^>]*>/g, "").substring(0, 2));
+                        
+                        // 為每顆主星獲取三方四正分析
+                        let palaceAnalysis = [];
+                        for (const star of stars) {
+                            try {
+                                const apiUrl = `http://localhost:3001/api/sanfang-sizheng-analysis?palace=${encodeURIComponent(palaceName)}&star=${encodeURIComponent(star)}`;
+                                
+                                const response = await fetch(apiUrl, {
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json'
+                                    }
+                                });
+                                
+                                if (!response.ok) {
+                                    throw new Error(`${palaceName} ${star} 三方四正分析API請求失敗: ${response.status}`);
+                                }
 
-                const sanfangSizhengHTML = await Promise.all(sizhengResults.map(async (palace, index) => {
-                    const palaceType = index === 0 ? '命宮' :
-                                     index === 1 ? '官祿宮' :
-                                     index === 2 ? '財帛宮' : '遷移宮';
-                    return `
-                        <div class="palace-stars-analysis">
-                            ${await analyzePalaceStars(palace.stars, palaceType)}
-                        </div>
-                    `;
-                }));
-
-                const sanfangContainer = document.getElementById('geju-analysis');
-                if (sanfangContainer) {
-                    sanfangContainer.innerHTML = sanfangSizhengHTML.join('');
+                                const data = await response.json();
+                                
+                                // 處理API返回的分析結果
+                                let analysisText = '';
+                                if (data.analysis && Array.isArray(data.analysis)) {
+                                    analysisText = data.analysis.map(item => {
+                                        if (typeof item === 'object') {
+                                            return Object.entries(item).map(([key, value]) => `<div class="star-item"><strong>${key}:</strong> ${value}</div>`).join('');
+                                        }
+                                        return `<div class="star-item">${item}</div>`;
+                                    }).join('');
+                                } else if (typeof data.analysis === 'string') {
+                                    analysisText = data.analysis;
+                                } else if (data.analysis) {
+                                    analysisText = JSON.stringify(data.analysis, null, 2);
+                                } else {
+                                    analysisText = '暫無分析數據';
+                                }
+                                
+                                palaceAnalysis.push(analysisText);
+                            } catch (error) {
+                                console.error(`${palaceName} ${star} 三方四正分析處理失敗:`, error);
+                            }
+                        }
+                        
+                        // 生成HTML內容
+                        if (palaceAnalysis.length > 0) {
+                            const analysisHTML = `
+                                <div class="palace-stars-analysis">
+                                    <div class="star-analysis-section">
+                                        <h3>${palaceName}分析</h3>
+                                        <div class="star-analysis-content">${palaceAnalysis.join('')}</div>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            // 更新DOM
+                            if (sanfangContainer) {
+                                sanfangContainer.innerHTML += analysisHTML;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('三方四正分析處理失敗:', error);
+                    const sanfangContainer = document.getElementById('geju-analysis');
+                    if (sanfangContainer) {
+                        sanfangContainer.innerHTML = '<div class="error">三方四正分析載入失敗</div>';
+                    }
                 }
             }
     
@@ -326,7 +369,7 @@ var ziweiUI = {
             const analysisContainer = document.getElementById('mingfu-analysis');
             if (analysisContainer) {
                 let htmlContent = '';
-                                         
+                                            
                 if (analysisResults.length > 0) {
                     // 按宮位分組分析結果
                     const groupedAnalysis = analysisResults.reduce((acc, curr) => {
@@ -476,7 +519,7 @@ var ziweiUI = {
         document.getElementById('zodiac-info').textContent = ziwei.getShengXiao();
         document.getElementById('fiveElement-info').textContent = ziwei.getFiveElement();
         document.getElementById('genderType-info').textContent = ziwei.getYinYangGender();    
-
+        
         document.getElementById('solarDate').textContent = ziwei.getSolarDay();
         document.getElementById('lunarDate').textContent = ziwei.getLunarDay();
         document.getElementById('zodiac').textContent = ziwei.getShengXiao();
